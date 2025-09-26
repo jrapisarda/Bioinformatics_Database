@@ -58,84 +58,121 @@ class FeatureEngineering:
                     features_df[col] = features_df[col].fillna(median_val)
                     logger.debug(f"Filled {features_df[col].isnull().sum()} missing values in {col} with median {median_val}")
         
+        new_cols: Dict[str, pd.Series] = {}
+
         # Effect size ratios and differences
         if 'dz_ss_mean' in data.columns and 'dz_soth_mean' in data.columns:
-            features_df['effect_size_ratio'] = self._safe_ratio(
-                data['dz_ss_mean'], data['dz_soth_mean']
-            )
-            features_df['effect_size_diff'] = data['dz_ss_mean'] - data['dz_soth_mean']
-            features_df['effect_size_sum'] = data['dz_ss_mean'] + data['dz_soth_mean']
-            features_df['effect_size_product'] = data['dz_ss_mean'] * data['dz_soth_mean']
-        
+            new_cols.update({
+                'effect_size_ratio': self._safe_ratio(
+                    data['dz_ss_mean'], data['dz_soth_mean']
+                ),
+                'effect_size_diff': data['dz_ss_mean'] - data['dz_soth_mean'],
+                'effect_size_sum': data['dz_ss_mean'] + data['dz_soth_mean'],
+                'effect_size_product': data['dz_ss_mean'] * data['dz_soth_mean'],
+            })
+
         # Statistical significance composite measures
         if 'p_ss' in data.columns and 'p_soth' in data.columns:
             # Handle very small p-values
             p_ss_safe = np.maximum(data['p_ss'], 1e-10)
             p_soth_safe = np.maximum(data['p_soth'], 1e-10)
-            
-            features_df['log_p_ss'] = -np.log10(p_ss_safe)
-            features_df['log_p_soth'] = -np.log10(p_soth_safe)
-            features_df['p_composite'] = self._safe_p_composite(p_ss_safe, p_soth_safe)
-            features_df['p_harmonic_mean'] = 2 / (1/p_ss_safe + 1/p_soth_safe)
-        
+
+            new_cols.update({
+                'log_p_ss': -np.log10(p_ss_safe),
+                'log_p_soth': -np.log10(p_soth_safe),
+                'p_composite': self._safe_p_composite(p_ss_safe, p_soth_safe),
+                'p_harmonic_mean': 2 / (1 / p_ss_safe + 1 / p_soth_safe),
+            })
+
         # Confidence interval features
         if all(col in data.columns for col in ['dz_ss_ci_low', 'dz_ss_ci_high']):
-            features_df['ci_ss_width'] = data['dz_ss_ci_high'] - data['dz_ss_ci_low']
-            features_df['ci_ss_center'] = (data['dz_ss_ci_high'] + data['dz_ss_ci_low']) / 2
-            features_df['ci_ss_relative_width'] = features_df['ci_ss_width'] / (np.abs(features_df['ci_ss_center']) + 1e-10)
-        
+            ci_ss_width = data['dz_ss_ci_high'] - data['dz_ss_ci_low']
+            ci_ss_center = (data['dz_ss_ci_high'] + data['dz_ss_ci_low']) / 2
+            new_cols.update({
+                'ci_ss_width': ci_ss_width,
+                'ci_ss_center': ci_ss_center,
+                'ci_ss_relative_width': ci_ss_width / (np.abs(ci_ss_center) + 1e-10),
+            })
+
         if all(col in data.columns for col in ['dz_soth_ci_low', 'dz_soth_ci_high']):
-            features_df['ci_soth_width'] = data['dz_soth_ci_high'] - data['dz_soth_ci_low']
-            features_df['ci_soth_center'] = (data['dz_soth_ci_high'] + data['dz_soth_ci_low']) / 2
-            features_df['ci_soth_relative_width'] = features_df['ci_soth_width'] / (np.abs(features_df['ci_soth_center']) + 1e-10)
-        
+            ci_soth_width = data['dz_soth_ci_high'] - data['dz_soth_ci_low']
+            ci_soth_center = (data['dz_soth_ci_high'] + data['dz_soth_ci_low']) / 2
+            new_cols.update({
+                'ci_soth_width': ci_soth_width,
+                'ci_soth_center': ci_soth_center,
+                'ci_soth_relative_width': ci_soth_width / (np.abs(ci_soth_center) + 1e-10),
+            })
+
         # Heterogeneity features
         if 'dz_ss_I2' in data.columns and 'dz_soth_I2' in data.columns:
-            features_df['i2_ratio'] = self._safe_ratio(
-                data['dz_ss_I2'], data['dz_soth_I2']
-            )
-            features_df['i2_max'] = np.maximum(data['dz_ss_I2'], data['dz_soth_I2'])
-            features_df['i2_min'] = np.minimum(data['dz_ss_I2'], data['dz_soth_I2'])
-            features_df['i2_mean'] = (data['dz_ss_I2'] + data['dz_soth_I2']) / 2
-        
+            new_cols.update({
+                'i2_ratio': self._safe_ratio(
+                    data['dz_ss_I2'], data['dz_soth_I2']
+                ),
+                'i2_max': np.maximum(data['dz_ss_I2'], data['dz_soth_I2']),
+                'i2_min': np.minimum(data['dz_ss_I2'], data['dz_soth_I2']),
+                'i2_mean': (data['dz_ss_I2'] + data['dz_soth_I2']) / 2,
+            })
+
         # Z-score features
         if 'dz_ss_z' in data.columns and 'dz_soth_z' in data.columns:
-            features_df['z_composite'] = np.sqrt(
-                data['dz_ss_z']**2 + data['dz_soth_z']**2
-            )
-            features_df['z_ratio'] = self._safe_ratio(
-                np.abs(data['dz_ss_z']), np.abs(data['dz_soth_z'])
-            )
-            features_df['z_sum'] = data['dz_ss_z'] + data['dz_soth_z']
-            features_df['z_product'] = data['dz_ss_z'] * data['dz_soth_z']
-        
+            new_cols.update({
+                'z_composite': np.sqrt(
+                    data['dz_ss_z'] ** 2 + data['dz_soth_z'] ** 2
+                ),
+                'z_ratio': self._safe_ratio(
+                    np.abs(data['dz_ss_z']), np.abs(data['dz_soth_z'])
+                ),
+                'z_sum': data['dz_ss_z'] + data['dz_soth_z'],
+                'z_product': data['dz_ss_z'] * data['dz_soth_z'],
+            })
+
         # Sample size features
         if 'n_studies_ss' in data.columns and 'n_studies_soth' in data.columns:
-            features_df['total_studies'] = data['n_studies_ss'] + data['n_studies_soth']
-            features_df['study_ratio'] = self._safe_ratio(
+            study_ratio = self._safe_ratio(
                 data['n_studies_ss'], data['n_studies_soth']
             )
-            features_df['study_log_ratio'] = np.log(features_df['study_ratio'] + 1e-10)
-        
+            new_cols.update({
+                'total_studies': data['n_studies_ss'] + data['n_studies_soth'],
+                'study_ratio': study_ratio,
+                'study_log_ratio': np.log(study_ratio + 1e-10),
+            })
+
         # FDR-adjusted features
         if 'q_ss' in data.columns and 'q_soth' in data.columns:
             q_ss_safe = np.maximum(data['q_ss'], 1e-10)
             q_soth_safe = np.maximum(data['q_soth'], 1e-10)
-            
-            features_df['log_q_ss'] = -np.log10(q_ss_safe)
-            features_df['log_q_soth'] = -np.log10(q_soth_safe)
-            features_df['q_composite'] = self._safe_q_composite(q_ss_safe, q_soth_safe)
-            features_df['q_max'] = np.maximum(q_ss_safe, q_soth_safe)
-            features_df['q_min'] = np.minimum(q_ss_safe, q_soth_safe)
-        
+
+            new_cols.update({
+                'log_q_ss': -np.log10(q_ss_safe),
+                'log_q_soth': -np.log10(q_soth_safe),
+                'q_composite': self._safe_q_composite(q_ss_safe, q_soth_safe),
+                'q_max': np.maximum(q_ss_safe, q_soth_safe),
+                'q_min': np.minimum(q_ss_safe, q_soth_safe),
+            })
+
+        derived_df = pd.DataFrame(new_cols, index=features_df.index) if new_cols else None
+        frames = [features_df]
+        if derived_df is not None:
+            frames.append(derived_df)
+
+        augmented_df = pd.concat(frames, axis=1)
+
         # Add absolute value features for algorithms that need positive input
-        numeric_cols = features_df.select_dtypes(include=[np.number]).columns
-        for col in numeric_cols:
-            if col not in ['pair_id', 'GeneAKey', 'GeneBKey']:
-                features_df[f'{col}_abs'] = np.abs(features_df[col])
-        
-        logger.info(f"Created {len(features_df.columns) - len(data.columns)} derived features")
-        return features_df
+        numeric_cols = augmented_df.select_dtypes(include=[np.number]).columns
+        numeric_cols_to_abs = [
+            col for col in numeric_cols if col not in ['pair_id', 'GeneAKey', 'GeneBKey']
+        ]
+        abs_block = (
+            augmented_df[numeric_cols_to_abs].abs().add_suffix('_abs')
+            if numeric_cols_to_abs
+            else pd.DataFrame(index=augmented_df.index)
+        )
+
+        result_df = pd.concat([augmented_df, abs_block], axis=1)
+
+        logger.info(f"Created {len(result_df.columns) - len(data.columns)} derived features")
+        return result_df
     
     def _safe_ratio(self, numerator: pd.Series, denominator: pd.Series) -> pd.Series:
         """Calculate ratio with protection against division by zero."""
