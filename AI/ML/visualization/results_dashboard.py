@@ -175,6 +175,8 @@ class ResultsDashboard:
     
     def _generate_html_report(self, dashboard: Dict[str, Any], output_path: str) -> str:
         """Generate HTML report."""
+        dashboard_json = json.dumps(dashboard, default=str).replace('</', '<\\/')
+
         html_content = f"""
         <!DOCTYPE html>
         <html lang="en">
@@ -185,6 +187,7 @@ class ResultsDashboard:
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
             <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
             <style>
                 body {{ font-family: Arial, sans-serif; margin: 20px; }}
                 .chart-container {{ margin: 20px 0; }}
@@ -220,19 +223,156 @@ class ResultsDashboard:
                     <div id="scatter-chart"></div>
                 </div>
             </div>
-            
+
+            <div id="gene-detail-modal" class="modal fade" tabindex="-1" aria-labelledby="geneDetailModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="geneDetailModalLabel">Gene Pair Details</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="gene-detail-error" class="alert alert-warning d-none" role="alert">
+                                Unable to locate detailed data for the selected gene pair.
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Gene A</dt>
+                                        <dd class="col-sm-8" id="modal-gene-a">-</dd>
+                                        <dt class="col-sm-4">Gene B</dt>
+                                        <dd class="col-sm-8" id="modal-gene-b">-</dd>
+                                        <dt class="col-sm-4">Combined Score</dt>
+                                        <dd class="col-sm-8" id="modal-combined-score">-</dd>
+                                        <dt class="col-sm-4">Rules Score</dt>
+                                        <dd class="col-sm-8" id="modal-rules-score">-</dd>
+                                        <dt class="col-sm-4">ML Confidence</dt>
+                                        <dd class="col-sm-8" id="modal-ml-confidence">-</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Additional Details</h6>
+                                    <pre class="bg-light p-3 border rounded" id="modal-full-json" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></pre>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="export-pair-btn">Export JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <script>
+                const dashboardData = {dashboard_json};
+
                 // Embed Plotly charts
                 const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {}))};
                 const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {}))};
-                
+
                 if (boxplotData.data) {{
                     Plotly.newPlot('boxplot-chart', boxplotData.data, boxplotData.layout);
                 }}
-                
+
                 if (scatterData.data) {{
                     Plotly.newPlot('scatter-chart', scatterData.data, scatterData.layout);
                 }}
+
+                function getRecommendations() {{
+                    const exportData = dashboardData && dashboardData.export_data ? dashboardData.export_data : {{}};
+                    const recs = Array.isArray(exportData.recommendations) ? exportData.recommendations : [];
+                    return recs;
+                }}
+
+                window.showGenePairDetails = function(geneA, geneB) {{
+                    const recommendations = getRecommendations();
+                    const modalElement = document.getElementById('gene-detail-modal');
+                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+                    const errorAlert = document.getElementById('gene-detail-error');
+                    const exportBtn = document.getElementById('export-pair-btn');
+
+                    const match = recommendations.find(rec => (
+                        (rec.gene_a === geneA && rec.gene_b === geneB) ||
+                        (rec.gene_a === geneB && rec.gene_b === geneA)
+                    ));
+
+                    if (match) {{
+                        errorAlert.classList.add('d-none');
+                        document.getElementById('modal-gene-a').textContent = match.gene_a || '-';
+                        document.getElementById('modal-gene-b').textContent = match.gene_b || '-';
+                        document.getElementById('modal-combined-score').textContent = typeof match.combined_score !== 'undefined' ? match.combined_score : '-';
+                        document.getElementById('modal-rules-score').textContent = typeof match.rules_score !== 'undefined' ? match.rules_score : '-';
+                        document.getElementById('modal-ml-confidence').textContent = typeof match.ml_confidence !== 'undefined' ? match.ml_confidence : '-';
+                        document.getElementById('modal-full-json').textContent = JSON.stringify(match, null, 2);
+
+                        if (exportBtn) {{
+                            exportBtn.disabled = false;
+                            exportBtn.classList.remove('disabled');
+                            exportBtn.onclick = function() {{
+                                exportPairData(match.gene_a, match.gene_b);
+                            }};
+                        }}
+                    }} else {{
+                        document.getElementById('modal-gene-a').textContent = geneA || '-';
+                        document.getElementById('modal-gene-b').textContent = geneB || '-';
+                        document.getElementById('modal-combined-score').textContent = '-';
+                        document.getElementById('modal-rules-score').textContent = '-';
+                        document.getElementById('modal-ml-confidence').textContent = '-';
+                        document.getElementById('modal-full-json').textContent = 'Recommendation details could not be found in the exported data set.';
+                        errorAlert.classList.remove('d-none');
+
+                        if (exportBtn) {{
+                            exportBtn.disabled = true;
+                            exportBtn.classList.add('disabled');
+                            exportBtn.onclick = null;
+                        }}
+                    }}
+
+                    modalInstance.show();
+                }};
+
+                window.exportPairData = function(geneA, geneB) {{
+                    const recommendations = getRecommendations();
+                    const record = recommendations.find(rec => (
+                        (rec.gene_a === geneA && rec.gene_b === geneB) ||
+                        (rec.gene_a === geneB && rec.gene_b === geneA)
+                    ));
+
+                    const exportBtn = document.getElementById('export-pair-btn');
+
+                    if (!record) {{
+                        if (exportBtn) {{
+                            exportBtn.disabled = true;
+                            exportBtn.classList.add('disabled');
+                        }}
+                        console.warn('No data available to export for the selected gene pair.');
+                        return;
+                    }}
+
+                    if (typeof Blob === 'undefined' || typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {{
+                        if (exportBtn) {{
+                            exportBtn.disabled = true;
+                            exportBtn.classList.add('disabled');
+                            exportBtn.title = 'Export not supported in this environment.';
+                        }}
+                        console.warn('Blob downloads are not supported in this environment.');
+                        return;
+                    }}
+
+                    const jsonString = JSON.stringify(record, null, 2);
+                    const blob = new Blob([jsonString], {{ type: 'application/json' }});
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    const safeGeneA = geneA ? geneA.replace(/[^a-z0-9_-]+/gi, '_') : 'geneA';
+                    const safeGeneB = geneB ? geneB.replace(/[^a-z0-9_-]+/gi, '_') : 'geneB';
+                    link.download = `${{safeGeneA}}_${{safeGeneB}}_recommendation.json`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                }};
             </script>
         </body>
         </html>
