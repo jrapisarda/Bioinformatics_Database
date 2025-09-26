@@ -45,20 +45,29 @@ class ChartGenerator:
         plot_data = []
         
         if 'dz_ss_mean' in data.columns:
-            plot_data.append({
-                'y': data['dz_ss_mean'].dropna(),
-                'name': 'Septic Shock Effect Size',
-                'marker_color': self.color_palette['primary'],
-                'boxpoints': 'outliers'
-            })
-        
+            ss_series = pd.to_numeric(data['dz_ss_mean'], errors='coerce')
+            ss_series = ss_series[np.isfinite(ss_series)]
+            if not ss_series.empty:
+                plot_data.append({
+                    'y': ss_series,
+                    'name': 'Septic Shock Effect Size',
+                    'marker_color': self.color_palette['primary'],
+                    'boxpoints': 'outliers'
+                })
+
         if 'dz_soth_mean' in data.columns:
-            plot_data.append({
-                'y': data['dz_soth_mean'].dropna(),
-                'name': 'Other Sepsis Effect Size',
-                'marker_color': self.color_palette['accent'],
-                'boxpoints': 'outliers'
-            })
+            soth_series = pd.to_numeric(data['dz_soth_mean'], errors='coerce')
+            soth_series = soth_series[np.isfinite(soth_series)]
+            if not soth_series.empty:
+                plot_data.append({
+                    'y': soth_series,
+                    'name': 'Other Sepsis Effect Size',
+                    'marker_color': self.color_palette['accent'],
+                    'boxpoints': 'outliers'
+                })
+
+        if not plot_data:
+            return self._empty_chart("No effect size data available")
         
         fig = go.Figure()
         
@@ -96,16 +105,24 @@ class ChartGenerator:
             return self._empty_chart("Scatter plot requires effect size columns")
         
         # Prepare data
-        x_data = data['dz_ss_mean']
-        y_data = data['dz_soth_mean']
+        x_series = pd.to_numeric(data['dz_ss_mean'], errors='coerce')
+        y_series = pd.to_numeric(data['dz_soth_mean'], errors='coerce')
+        finite_mask = np.isfinite(x_series) & np.isfinite(y_series)
+
+        if not finite_mask.any():
+            return self._empty_chart("Scatter plot requires finite effect size values")
+
+        filtered_data = data.loc[finite_mask]
+        x_data = x_series[finite_mask]
+        y_data = y_series[finite_mask]
         
         # Color by significance
         colors = []
-        if 'p_ss' in data.columns and 'p_soth' in data.columns:
-            for i in range(len(data)):
-                p_ss = data.iloc[i]['p_ss']
-                p_soth = data.iloc[i]['p_soth']
-                
+        if 'p_ss' in filtered_data.columns and 'p_soth' in filtered_data.columns:
+            for _, row in filtered_data.iterrows():
+                p_ss = row['p_ss']
+                p_soth = row['p_soth']
+
                 if p_ss < 0.05 and p_soth < 0.01:
                     colors.append(self.color_palette['highlight'])
                 elif p_ss < 0.1 or p_soth < 0.05:
@@ -113,7 +130,7 @@ class ChartGenerator:
                 else:
                     colors.append(self.color_palette['primary'])
         else:
-            colors = [self.color_palette['primary']] * len(data)
+            colors = [self.color_palette['primary']] * len(filtered_data)
         
         fig = go.Figure()
         
@@ -127,8 +144,8 @@ class ChartGenerator:
                 opacity=0.7,
                 line=dict(width=1, color='white')
             ),
-            text=[f"Gene A: {row['GeneAName']}<br>Gene B: {row['GeneBName']}" 
-                  for _, row in data.iterrows()],
+            text=[f"Gene A: {row['GeneAName']}<br>Gene B: {row['GeneBName']}"
+                  for _, row in filtered_data.iterrows()],
             hovertemplate='<b>%{text}</b><br>' +
                          'Septic Shock: %{x:.3f}<br>' +
                          'Other Sepsis: %{y:.3f}<br>' +
