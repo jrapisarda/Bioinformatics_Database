@@ -223,8 +223,8 @@ class ResultsDashboard:
             
             <script>
                 // Embed Plotly charts
-                const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {{}}))};
-                const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {{}}))};
+                const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {}))};
+                const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {}))};
                 
                 if (boxplotData.data) {{
                     Plotly.newPlot('boxplot-chart', boxplotData.data, boxplotData.layout);
