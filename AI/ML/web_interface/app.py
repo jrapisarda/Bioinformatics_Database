@@ -34,7 +34,7 @@ try:
     import sys
     sys.path.append(str(Path(__file__).parent.parent))
     
-    from gene_pair_agent import GenePairAnalyzer, RulesEngine, MetaAnalysisProcessor, DatabaseConnector
+    from gene_pair_agent import GenePairAnalyzer, RulesEngine, MetaAnalysisProcessor, DatabaseConnector, Rule
     from visualization import ChartGenerator, ResultsDashboard
     
     logger.info("Successfully imported core analysis modules")
@@ -54,6 +54,17 @@ except ImportError as e:
         get_mock_rules_engine,
         get_mock_processor
     )
+
+    from dataclasses import dataclass
+
+    @dataclass
+    class Rule:
+        """Lightweight rule representation for mock engine compatibility."""
+        name: str
+        condition: str
+        weight: float
+        description: str = ""
+        enabled: bool = True
     
     # Create mock visualization classes
     class MockChartGenerator:
@@ -116,10 +127,13 @@ app.secret_key = 'gene-pair-ml-analysis-secret-key'
 UPLOAD_FOLDER = Path(__file__).parent / 'uploads'
 RESULTS_FOLDER = Path(__file__).parent / 'results'
 ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'csv', 'json'}
+RULES_CONFIG_DIR = Path(__file__).parent / 'config'
+RULES_CONFIG_PATH = RULES_CONFIG_DIR / 'rules_config.json'
 
 # Create directories
 UPLOAD_FOLDER.mkdir(exist_ok=True)
 RESULTS_FOLDER.mkdir(exist_ok=True)
+RULES_CONFIG_DIR.mkdir(exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['RESULTS_FOLDER'] = RESULTS_FOLDER
@@ -127,6 +141,75 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Global storage for analysis results (in production, use a proper database)
 analysis_results = {}
+
+
+def _default_rule_names() -> set:
+    """Return the set of rule names that ship with the engine by default."""
+    if hasattr(RulesEngine, 'DEFAULT_RULES'):
+        try:
+            return {rule.name for rule in RulesEngine.DEFAULT_RULES}
+        except Exception:
+            return set()
+    return set()
+
+
+def _load_rules_engine() -> RulesEngine:
+    """Instantiate rules engine, loading persisted configuration when available."""
+    config_path = str(RULES_CONFIG_PATH) if RULES_CONFIG_PATH.exists() else None
+
+    if config_path:
+        try:
+            return RulesEngine(config_path=config_path)
+        except TypeError:
+            logger.debug("RulesEngine does not support config_path parameter; using defaults")
+
+    return RulesEngine()
+
+
+def _save_rules(engine: RulesEngine) -> None:
+    """Persist the current rules configuration to disk."""
+    if not hasattr(engine, 'save_rules_to_config'):
+        logger.warning("Rules engine does not support persistence; skipping save")
+        return
+
+    try:
+        engine.save_rules_to_config(str(RULES_CONFIG_PATH))
+    except Exception as exc:
+        logger.error(f"Failed to save rules configuration: {exc}")
+        raise
+
+
+def _build_rules_response(engine: RulesEngine) -> Dict[str, Any]:
+    """Create categorized payload of default and custom rules for the UI."""
+    summary = engine.get_rule_summary()
+    default_names = _default_rule_names()
+
+    default_rules = []
+    custom_rules = []
+
+    for rule in summary.get('rules', []):
+        target = default_rules if rule.get('name') in default_names else custom_rules
+        target.append(rule)
+
+    summary_payload = {k: v for k, v in summary.items() if k != 'rules'}
+
+    return {
+        'summary': summary_payload,
+        'default_rules': default_rules,
+        'custom_rules': custom_rules,
+        'all_rules': summary.get('rules', [])
+    }
+
+
+def _coerce_enabled(value: Any) -> bool:
+    """Interpret user-provided values as booleans."""
+    if isinstance(value, bool):
+        return value
+
+    if isinstance(value, str):
+        return value.strip().lower() not in {'false', '0', 'off', 'no', ''}
+
+    return bool(value)
 
 
 def allowed_file(filename):
@@ -417,29 +500,124 @@ def rules_configuration():
 def get_default_rules():
     """Get default rules configuration."""
     try:
-        rules_engine = RulesEngine()
-        return jsonify(rules_engine.get_rule_summary())
+        rules_engine = _load_rules_engine()
+        return jsonify(_build_rules_response(rules_engine))
     except Exception as e:
         logger.error(f"Error getting default rules: {e}")
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/rules', methods=['POST'])
+def create_rule():
+    """Create a new custom rule and persist configuration."""
+    if not request.is_json:
+        return jsonify({'error': 'Request must be JSON'}), 400
+
+    payload = request.get_json(force=True)
+
+    missing = {field for field in ('name', 'condition', 'weight') if field not in payload}
+    if missing:
+        return jsonify({'error': f"Missing required fields: {', '.join(sorted(missing))}"}), 400
+
+    try:
+        rule = Rule(
+            name=payload['name'],
+            condition=payload['condition'],
+            weight=float(payload['weight']),
+            description=payload.get('description', ''),
+            enabled=_coerce_enabled(payload.get('enabled', True))
+        )
+    except (TypeError, ValueError) as exc:
+        logger.error(f"Invalid rule payload: {exc}")
+        return jsonify({'error': str(exc)}), 400
+
+    try:
+        engine = _load_rules_engine()
+        engine.add_rule(rule)
+        _save_rules(engine)
+        return jsonify(_build_rules_response(engine)), 201
+    except ValueError as exc:
+        logger.error(f"Rule creation error: {exc}")
+        return jsonify({'error': str(exc)}), 400
+    except Exception as exc:
+        logger.error(f"Unexpected error creating rule: {exc}")
+        return jsonify({'error': str(exc)}), 500
+
+
+@app.route('/api/rules/<string:rule_name>', methods=['PUT'])
+def update_rule(rule_name: str):
+    """Update an existing rule identified by name."""
+    if not request.is_json:
+        return jsonify({'error': 'Request must be JSON'}), 400
+
+    payload = request.get_json(force=True)
+
+    allowed_fields = {'name', 'condition', 'weight', 'description', 'enabled'}
+    updates = {k: v for k, v in payload.items() if k in allowed_fields}
+
+    if not updates:
+        return jsonify({'error': 'No updatable fields provided'}), 400
+
+    if 'weight' in updates:
+        try:
+            updates['weight'] = float(updates['weight'])
+        except (TypeError, ValueError) as exc:
+            return jsonify({'error': f'Invalid weight value: {exc}'}), 400
+
+    if 'enabled' in updates:
+        updates['enabled'] = _coerce_enabled(updates['enabled'])
+
+    try:
+        engine = _load_rules_engine()
+        updated = engine.update_rule(rule_name, **updates)
+        if not updated:
+            return jsonify({'error': f"Rule '{rule_name}' not found"}), 404
+
+        _save_rules(engine)
+        return jsonify(_build_rules_response(engine))
+    except ValueError as exc:
+        logger.error(f"Rule update error: {exc}")
+        return jsonify({'error': str(exc)}), 400
+    except Exception as exc:
+        logger.error(f"Unexpected error updating rule '{rule_name}': {exc}")
+        return jsonify({'error': str(exc)}), 500
+
+
+@app.route('/api/rules/<string:rule_name>', methods=['DELETE'])
+def delete_rule(rule_name: str):
+    """Delete a custom rule by name."""
+    default_names = _default_rule_names()
+    if rule_name in default_names:
+        return jsonify({'error': 'Default rules cannot be deleted'}), 400
+
+    try:
+        engine = _load_rules_engine()
+        removed = engine.remove_rule(rule_name)
+        if not removed:
+            return jsonify({'error': f"Rule '{rule_name}' not found"}), 404
+
+        _save_rules(engine)
+        return jsonify(_build_rules_response(engine))
+    except Exception as exc:
+        logger.error(f"Unexpected error deleting rule '{rule_name}': {exc}")
+        return jsonify({'error': str(exc)}), 500
 
 
 @app.route('/api/rules/test', methods=['POST'])
 def test_rules():
     """Test rules against sample data."""
     try:
-        rules_config = request.json
-        
+        rules_config = request.json or {}
+
         # Create sample data for testing
         processor = MetaAnalysisProcessor()
         sample_data = processor.create_sample_data(10)
-        
+
         # Configure rules engine
-        rules_engine = RulesEngine()
-        
+        rules_engine = _load_rules_engine()
+
         if 'custom_rules' in rules_config:
             for rule_data in rules_config['custom_rules']:
-                from gene_pair_agent.rules_engine import Rule
                 rule = Rule(**rule_data)
                 rules_engine.add_rule(rule)
         

@@ -120,9 +120,9 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Weight</th>
-                                        <th>Field</th>
                                         <th>Condition</th>
-                                        <th>Value</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -149,7 +149,7 @@
                             <p class="text-muted mb-3">
                                 Test your rules against sample data to see how they affect rankings.
                             </p>
-                            <button class="btn btn-outline-primary" onclick="testRules()">
+                            <button class="btn btn-outline-primary" type="button" id="testRulesBtn">
                                 <i class="fas fa-play me-1"></i>Run Test
                             </button>
                             
@@ -168,79 +168,147 @@
 {% block scripts %}
 <script>
 let customRules = [];
+let defaultRules = [];
 
-// Load default rules on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadDefaultRules();
+const fieldMappings = {
+    'p_value_ss': 'p_ss',
+    'p_value_soth': 'p_soth',
+    'effect_size_ss': 'abs_dz_ss',
+    'effect_size_soth': 'abs_dz_soth',
+    'sample_size': 'total_samples'
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadRules();
+
+    const addRuleForm = document.getElementById('addRuleForm');
+    if (addRuleForm) {
+        addRuleForm.addEventListener('submit', handleAddRule);
+    }
+
+    const testButton = document.getElementById('testRulesBtn');
+    if (testButton) {
+        testButton.addEventListener('click', testRules);
+    }
 });
 
-function loadDefaultRules() {
-    // Simulate loading default rules
-    const defaultRules = [
-        {
-            name: "Significant P-value SS",
-            weight: 0.3,
-            description: "Prioritize pairs with significant p-values in septic shock condition"
-        },
-        {
-            name: "Large Effect Size",
-            weight: 0.4,
-            description: "Give higher scores to pairs with large effect sizes"
-        },
-        {
-            name: "Consistent Direction",
-            weight: 0.2,
-            description: "Reward pairs with consistent effect direction across conditions"
-        },
-        {
-            name: "High Sample Size",
-            weight: 0.1,
-            description: "Consider sample size in ranking calculations"
+async function loadRules() {
+    try {
+        const response = await fetch('/api/rules/default');
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to load rules');
         }
-    ];
-    
-    const tbody = document.getElementById('defaultRulesBody');
-    tbody.innerHTML = '';
-    
-    defaultRules.forEach(rule => {
-        const row = `
-            <tr>
-                <td>${rule.name}</td>
-                <td>${rule.weight}</td>
-                <td>${rule.description}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
+
+        applyRulesResponse(data);
+    } catch (error) {
+        console.error('Failed to load rules', error);
+        renderDefaultRules([]);
+        customRules = [];
+        updateCustomRulesTable();
+        showAlert(`Error loading rules: ${escapeHtml(error.message)}`, 'danger');
+    }
 }
 
-// Add custom rule
-document.getElementById('addRuleForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const rule = {
-        name: document.getElementById('ruleName').value,
-        weight: parseFloat(document.getElementById('ruleWeight').value),
-        field: document.getElementById('ruleField').value,
-        condition: document.getElementById('ruleCondition').value,
-        value: document.getElementById('ruleValue').value,
-        description: document.getElementById('ruleDescription').value
-    };
-    
-    customRules.push(rule);
+function applyRulesResponse(data) {
+    if (!data) {
+        return;
+    }
+
+    defaultRules = Array.isArray(data.default_rules) ? data.default_rules : defaultRules;
+    customRules = Array.isArray(data.custom_rules) ? data.custom_rules : customRules;
+
+    renderDefaultRules(defaultRules);
     updateCustomRulesTable();
-    
-    // Reset form
-    this.reset();
-    
-    // Show success message
-    showAlert('Rule added successfully!', 'success');
-});
+}
+
+function renderDefaultRules(rules) {
+    const tbody = document.getElementById('defaultRulesBody');
+    if (!tbody) {
+        return;
+    }
+
+    if (!Array.isArray(rules) || rules.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" class="text-center text-muted">No rules available.</td>
+            </tr>
+        `;
+        return;
+    }
+
+    tbody.innerHTML = rules.map(rule => `
+        <tr>
+            <td>${escapeHtml(rule.name)}</td>
+            <td>${formatWeight(rule.weight)}</td>
+            <td>${escapeHtml(rule.description || '')}</td>
+        </tr>
+    `).join('');
+}
+
+async function handleAddRule(event) {
+    event.preventDefault();
+
+    const form = event.currentTarget;
+    const name = form.ruleName.value.trim();
+    const weightValue = Number(form.ruleWeight.value);
+    const fieldKey = form.ruleField.value;
+    const conditionType = form.ruleCondition.value;
+    const rawValue = form.ruleValue.value;
+    const description = form.ruleDescription.value.trim();
+
+    if (!name) {
+        showAlert('Rule name is required.', 'warning');
+        return;
+    }
+
+    if (!Number.isFinite(weightValue)) {
+        showAlert('Please provide a numeric weight between 0 and 1.', 'warning');
+        return;
+    }
+
+    try {
+        const conditionExpression = buildConditionExpression(fieldKey, conditionType, rawValue);
+
+        const payload = {
+            name,
+            weight: weightValue,
+            condition: conditionExpression,
+            description,
+            enabled: true
+        };
+
+        const response = await fetch('/api/rules', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to add rule');
+        }
+
+        applyRulesResponse(data);
+        form.reset();
+        showAlert('Rule added successfully!', 'success');
+    } catch (error) {
+        console.error('Failed to add rule', error);
+        showAlert(`Error adding rule: ${escapeHtml(error.message)}`, 'danger');
+    }
+}
 
 function updateCustomRulesTable() {
     const tbody = document.getElementById('customRulesBody');
-    
-    if (customRules.length === 0) {
+    if (!tbody) {
+        return;
+    }
+
+    if (!Array.isArray(customRules) || customRules.length === 0) {
         tbody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center text-muted">
@@ -250,117 +318,200 @@ function updateCustomRulesTable() {
         `;
         return;
     }
-    
-    tbody.innerHTML = '';
-    
-    customRules.forEach((rule, index) => {
-        const row = `
-            <tr>
-                <td>${rule.name}</td>
-                <td>${rule.weight}</td>
-                <td>${rule.field}</td>
-                <td>${rule.condition}</td>
-                <td>${rule.value}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger" onclick="removeRule(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
+
+    tbody.innerHTML = customRules.map((rule, index) => `
+        <tr>
+            <td>${escapeHtml(rule.name)}</td>
+            <td>${formatWeight(rule.weight)}</td>
+            <td><code>${escapeHtml(rule.condition)}</code></td>
+            <td>${escapeHtml(rule.description || '')}</td>
+            <td>${rule.enabled === false ? '<span class="badge bg-secondary">Disabled</span>' : '<span class="badge bg-success">Enabled</span>'}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" type="button" onclick="removeRule(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    `).join('');
 }
 
-function removeRule(index) {
-    customRules.splice(index, 1);
-    updateCustomRulesTable();
-    showAlert('Rule removed successfully!', 'info');
+async function removeRule(index) {
+    const rule = customRules[index];
+    if (!rule) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/rules/${encodeURIComponent(rule.name)}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to delete rule');
+        }
+
+        applyRulesResponse(data);
+        showAlert(`Rule "${escapeHtml(rule.name)}" deleted successfully.`, 'info');
+    } catch (error) {
+        console.error('Failed to delete rule', error);
+        showAlert(`Error deleting rule: ${escapeHtml(error.message)}`, 'danger');
+    }
 }
 
-function testRules() {
-    const testBtn = document.querySelector('button[onclick="testRules()"]');
-    testBtn.disabled = true;
-    testBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Testing...';
-    
-    // Simulate rule testing
-    setTimeout(() => {
-        const results = `
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle me-2"></i>
-                Rules test completed successfully!
+async function testRules(event) {
+    const button = event?.currentTarget || document.getElementById('testRulesBtn');
+    const originalContent = button ? button.innerHTML : '';
+
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Testing...';
+    }
+
+    try {
+        const response = await fetch('/api/rules/test', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ custom_rules: customRules })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Unable to test rules');
+        }
+
+        renderTestResults(data);
+        showAlert('Rules test completed successfully!', 'success');
+    } catch (error) {
+        console.error('Failed to test rules', error);
+        showAlert(`Error testing rules: ${escapeHtml(error.message)}`, 'danger');
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = originalContent || '<i class="fas fa-play me-1"></i>Run Test';
+        }
+    }
+}
+
+function renderTestResults(result) {
+    const container = document.getElementById('testResults');
+    if (!container) {
+        return;
+    }
+
+    const summary = result.rules_summary || {};
+    const topScores = Array.isArray(result.top_scores) ? result.top_scores : [];
+    const topScoreMarkup = topScores.length
+        ? `<div class="d-flex flex-wrap gap-2">${topScores.map(score => `<span class="badge bg-secondary">${formatScore(score)}</span>`).join('')}</div>`
+        : '—';
+
+    container.innerHTML = `
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>Rules test completed successfully!
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <h6 class="mb-2">Test Results</h6>
+                <ul class="mb-0 small">
+                    <li>Sample pairs tested: ${escapeHtml(String(result.sample_pairs ?? '—'))}</li>
+                    <li>Ranked pairs returned: ${escapeHtml(String(result.ranked_pairs ?? '—'))}</li>
+                    <li>Top scores: ${topScoreMarkup}</li>
+                </ul>
             </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Test Results:</h6>
-                    <ul>
-                        <li>Sample pairs tested: 10</li>
-                        <li>Rules applied: ${customRules.length + 4}</li>
-                        <li>Top score: 0.85</li>
-                        <li>Rules summary generated</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h6>Recommendations:</h6>
-                    <p class="small text-muted">
-                        Your custom rules have been successfully integrated with the default rules.
-                        The ranking system is ready for analysis.
-                    </p>
-                </div>
+            <div class="col-md-6">
+                <h6 class="mb-2">Rules Summary</h6>
+                <ul class="mb-0 small">
+                    <li>Total rules: ${escapeHtml(String(summary.total_rules ?? '—'))}</li>
+                    <li>Enabled rules: ${escapeHtml(String(summary.enabled_rules ?? '—'))}</li>
+                </ul>
             </div>
-        `;
-        
-        document.getElementById('testResults').innerHTML = results;
-        document.getElementById('testResults').style.display = 'block';
-        
-        // Reset button
-        testBtn.disabled = false;
-        testBtn.innerHTML = '<i class="fas fa-play me-1"></i>Run Test';
-    }, 2000);
-    
-    // Real implementation would be:
-    /*
-    fetch('/api/rules/test', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            custom_rules: customRules
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Show test results
-        const results = `
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle me-2"></i>
-                Rules test completed successfully!
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Test Results:</h6>
-                    <ul>
-                        <li>Sample pairs tested: ${data.sample_pairs}</li>
-                        <li>Rules applied: ${data.rules_summary.total_rules}</li>
-                        <li>Top score: ${data.top_scores[0]}</li>
-                        <li>Average score: ${data.top_scores.reduce((a, b) => a + b) / data.top_scores.length}</li>
-                    </ul>
-                </div>
-            </div>
-        `;
-        
-        document.getElementById('testResults').innerHTML = results;
-        document.getElementById('testResults').style.display = 'block';
-    })
-    .catch(error => {
-        showAlert('Error testing rules: ' + error.message, 'danger');
-    })
-    .finally(() => {
-        testBtn.disabled = false;
-        testBtn.innerHTML = '<i class="fas fa-play me-1"></i>Run Test';
-    });
-    */
+        </div>
+    `;
+
+    container.style.display = 'block';
+}
+
+function buildConditionExpression(fieldKey, conditionType, rawValue) {
+    const field = fieldMappings[fieldKey];
+    if (!field) {
+        throw new Error('Select a supported field for this rule.');
+    }
+
+    const value = (rawValue || '').trim();
+    if (!value) {
+        throw new Error('Provide a value for the condition.');
+    }
+
+    switch (conditionType) {
+        case 'less_than':
+            return `${field} < ${formatNumberForCondition(value)}`;
+        case 'greater_than':
+            return `${field} > ${formatNumberForCondition(value)}`;
+        case 'equal_to':
+            return `${field} == ${formatNumberForCondition(value)}`;
+        case 'between': {
+            const range = parseBetweenRange(value);
+            return `${field} >= ${formatNumberForCondition(range.low)} and ${field} <= ${formatNumberForCondition(range.high)}`;
+        }
+        default:
+            throw new Error('Select a condition to continue.');
+    }
+}
+
+function parseBetweenRange(rawValue) {
+    const parts = rawValue.split(',').map(part => part.trim()).filter(Boolean);
+
+    if (parts.length !== 2) {
+        throw new Error('Between conditions require two comma-separated numbers (e.g., 0.1, 0.5).');
+    }
+
+    const first = Number(parts[0]);
+    const second = Number(parts[1]);
+
+    if (!Number.isFinite(first) || !Number.isFinite(second)) {
+        throw new Error('Between condition values must be numeric.');
+    }
+
+    return {
+        low: Math.min(first, second),
+        high: Math.max(first, second)
+    };
+}
+
+function formatNumberForCondition(value) {
+    const num = typeof value === 'number' ? value : Number(value);
+    if (!Number.isFinite(num)) {
+        throw new Error('Condition value must be numeric.');
+    }
+    return Number.isInteger(num) ? num.toString() : num.toString();
+}
+
+function formatWeight(value) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num.toFixed(2) : '—';
+}
+
+function formatScore(value) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num.toFixed(3) : '—';
+}
+
+function escapeHtml(value) {
+    if (value === null || value === undefined) {
+        return '';
+    }
+
+    return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
 }
 
 function showAlert(message, type) {
@@ -370,12 +521,14 @@ function showAlert(message, type) {
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
-    
-    // Insert alert at the top of the content
+
     const container = document.querySelector('.card-body');
+    if (!container) {
+        return;
+    }
+
     container.insertAdjacentHTML('afterbegin', alert);
-    
-    // Auto-dismiss after 5 seconds
+
     setTimeout(() => {
         const alertElement = container.querySelector('.alert');
         if (alertElement) {
