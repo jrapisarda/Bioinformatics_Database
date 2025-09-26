@@ -7,19 +7,20 @@ system with various options for data input, analysis configuration, and output.
 """
 
 import argparse
-import sys
-import logging
 import json
+import logging
+import sys
+import uuid
 
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
   
 
 # Add the project root to Python path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from gene_pair_agent import GenePairAnalyzer, RulesEngine, MetaAnalysisProcessor, DatabaseConnector
-from visualization import ChartGenerator
+from visualization import ChartGenerator, ResultsDashboard
 
 def setup_logging(verbose: bool = False) -> None:
     """Configure logging for the application."""
@@ -43,7 +44,12 @@ def load_config(config_path: str) -> Dict[str, Any]:
         logging.error(f"Failed to load config from {config_path}: {e}")
         sys.exit(1)
 
-def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[str, Any]] = None) -> None:
+def run_file_analysis(
+    file_path: str,
+    output_path: str,
+    config: Optional[Dict[str, Any]] = None,
+    dashboard_html: Optional[str] = None,
+) -> None:
     """Run analysis on file-based data."""
     logger = logging.getLogger(__name__)
     
@@ -79,6 +85,21 @@ def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[st
         logger.info("Starting gene pair analysis...")
         analyzer.fit(prepared_data)
         results = analyzer.predict(prepared_data)
+
+        if dashboard_html:
+            dashboard = ResultsDashboard()
+            session_id = uuid.uuid4().hex
+            dashboard_data = dashboard.create_comprehensive_dashboard(
+                results,
+                prepared_data,
+                session_id,
+            )
+            dashboard_output = dashboard.generate_report(
+                dashboard_data,
+                dashboard_html,
+                format='html',
+            )
+            logger.info(f"Dashboard report saved to: {dashboard_output}")
         
         # Generate visualizations
         chart_gen = ChartGenerator()
@@ -104,7 +125,11 @@ def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[st
         logger.error(f"Analysis failed: {e}")
         sys.exit(1)
 
-def run_database_analysis(config: Dict[str, Any], output_path: str) -> None:
+def run_database_analysis(
+    config: Dict[str, Any],
+    output_path: str,
+    dashboard_html: Optional[str] = None,
+) -> None:
     """Run analysis on database data."""
     logger = logging.getLogger(__name__)
     
@@ -150,6 +175,21 @@ def run_database_analysis(config: Dict[str, Any], output_path: str) -> None:
         logger.info("Starting analysis...")
         analyzer.fit(prepared_data)
         results = analyzer.predict(prepared_data)
+
+        if dashboard_html:
+            dashboard = ResultsDashboard()
+            session_id = uuid.uuid4().hex
+            dashboard_data = dashboard.create_comprehensive_dashboard(
+                results,
+                data,
+                session_id,
+            )
+            dashboard_output = dashboard.generate_report(
+                dashboard_data,
+                dashboard_html,
+                format='html',
+            )
+            logger.info(f"Dashboard report saved to: {dashboard_output}")
         
         # Save results
         output_format = Path(output_path).suffix.lstrip('.').lower()
@@ -203,6 +243,16 @@ def main():
         help='Output file path (extension determines format: .json, .csv, .xlsx, ... )'
     )
     parser.add_argument('--config', '-c', help='Configuration file path (JSON)')
+    parser.add_argument(
+        '--dashboard-html',
+        nargs='?',
+        const='AUTO',
+        metavar='PATH',
+        help=(
+            'Generate an HTML dashboard report. Optionally provide a PATH; '
+            'defaults to <output>_dashboard.html beside the primary results.'
+        ),
+    )
     
     # Analysis parameters
     parser.add_argument('--n-features', type=int, default=5, help='Number of PCA features (default: 5)')
@@ -233,23 +283,45 @@ def main():
             'contamination': args.contamination
         }
     
+    dashboard_path: Optional[Path] = None
+    if args.dashboard_html is not None:
+        output_path = Path(args.output)
+        if args.dashboard_html == 'AUTO' or args.dashboard_html == '':
+            dashboard_path = output_path.with_name(f"{output_path.stem}_dashboard.html")
+        else:
+            dashboard_path = Path(args.dashboard_html)
+            if dashboard_path.is_dir():
+                dashboard_path = dashboard_path / f"{output_path.stem}_dashboard.html"
+        if dashboard_path.suffix.lower() != '.html':
+            dashboard_path = dashboard_path.with_suffix('.html')
+        dashboard_path.parent.mkdir(parents=True, exist_ok=True)
+
     # Run appropriate analysis
     if args.sample:
         logger.info("Creating sample data...")
         create_sample_data(args.output, args.n_pairs)
-        
+
     elif args.file:
         logger.info(f"Running file analysis on: {args.file}")
-        run_file_analysis(args.file, args.output, config)
-        
+        run_file_analysis(
+            args.file,
+            args.output,
+            config,
+            str(dashboard_path) if dashboard_path else None,
+        )
+
     elif args.database:
         if not args.config:
             logger.error("Database analysis requires a configuration file")
             sys.exit(1)
-        
+
         logger.info("Running database analysis...")
-        run_database_analysis(config, args.output)
-    
+        run_database_analysis(
+            config,
+            args.output,
+            str(dashboard_path) if dashboard_path else None,
+        )
+
     logger.info("Process completed successfully!")
 
 if __name__ == '__main__':
