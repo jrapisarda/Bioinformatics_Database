@@ -6,6 +6,7 @@ and configurable rules-based ranking for gene pair correlation analysis.
 """
 
 import logging
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from typing import Dict, List, Tuple, Optional, Any
@@ -439,21 +440,98 @@ class GenePairAnalyzer:
             'feature_engineering_summary': self.feature_engineering.get_feature_summary()
         }
     
-    def save_results(self, filepath: str) -> None:
-        """Save analysis results to file."""
+    def save_results(self, filepath: str, format: Optional[str] = None) -> None:
+        """Save analysis results to disk in JSON or tabular formats.
+
+        Args:
+            filepath: Destination path for the exported results.
+            format: Optional explicit format ("json", "csv", "xlsx", etc.). If
+                not provided, the format is inferred from the file extension.
+        """
         import json
-        
-        results_to_save = {
-            'analysis_summary': self.get_analysis_summary(),
-            'recommendations': self.analysis_results.get('recommendations', []),
-            'summary_stats': self.analysis_results.get('summary_stats', {}),
-            'rules_engine_config': self.rules_engine.get_rule_summary()
-        }
-        
-        with open(filepath, 'w') as f:
-            json.dump(results_to_save, f, indent=2, default=str)
-        
-        logger.info(f"Analysis results saved to {filepath}")
+
+        if not self.analysis_results:
+            raise ValueError("No analysis results available to save.")
+
+        resolved_format = (format or Path(filepath).suffix.lstrip('.')).lower()
+        if not resolved_format:
+            resolved_format = 'json'
+
+        recommendations = self.analysis_results.get('recommendations', [])
+        summary_stats = self.analysis_results.get('summary_stats', {})
+        rule_summary = self.rules_engine.get_rule_summary()
+
+        # Flatten complex structures for tabular export
+        recommendations_df = pd.json_normalize(recommendations) if recommendations else pd.DataFrame()
+        summary_stats_df = pd.json_normalize(summary_stats) if summary_stats else pd.DataFrame()
+
+        rules_overview = {k: v for k, v in rule_summary.items() if k != 'rules'}
+        rules_overview_df = pd.json_normalize(rules_overview) if rules_overview else pd.DataFrame()
+        rules_df = pd.json_normalize(rule_summary.get('rules', [])) if rule_summary.get('rules') else pd.DataFrame()
+
+        if resolved_format in {'json', 'jsonl'}:
+            results_to_save = {
+                'analysis_summary': self.get_analysis_summary(),
+                'recommendations': recommendations,
+                'summary_stats': summary_stats,
+                'rules_engine_config': rule_summary
+            }
+
+            with open(filepath, 'w') as f:
+                json.dump(results_to_save, f, indent=2, default=str)
+
+            logger.info(f"Analysis results saved to {filepath} (JSON format)")
+            return
+
+        if resolved_format in {'csv', 'tsv'}:
+            delimiter = ',' if resolved_format == 'csv' else '\t'
+
+            tables = []
+            if not summary_stats_df.empty:
+                summary_stats_df.insert(0, 'table', 'summary_stats')
+                tables.append(summary_stats_df)
+            if not recommendations_df.empty:
+                recommendations_df.insert(0, 'table', 'recommendations')
+                tables.append(recommendations_df)
+            if not rules_overview_df.empty:
+                rules_overview_df.insert(0, 'table', 'rules_overview')
+                tables.append(rules_overview_df)
+            if not rules_df.empty:
+                rules_df.insert(0, 'table', 'rules')
+                tables.append(rules_df)
+
+            if not tables:
+                pd.DataFrame({'table': [], 'message': []}).to_csv(filepath, index=False, sep=delimiter)
+            else:
+                combined_df = pd.concat(tables, ignore_index=True, sort=False)
+                combined_df.to_csv(filepath, index=False, sep=delimiter)
+
+            logger.info(f"Analysis results saved to {filepath} ({resolved_format.upper()} format)")
+            return
+
+        if resolved_format in {'xlsx', 'xls', 'excel'}:
+            sheet_tables = [
+                ('SummaryStats', summary_stats_df),
+                ('Recommendations', recommendations_df),
+                ('RulesOverview', rules_overview_df),
+                ('Rules', rules_df)
+            ]
+
+            with pd.ExcelWriter(filepath) as writer:
+                wrote_any_sheet = False
+                for sheet_name, df in sheet_tables:
+                    if df is not None and not df.empty:
+                        df.to_excel(writer, sheet_name=sheet_name[:31], index=False)
+                        wrote_any_sheet = True
+
+                if not wrote_any_sheet:
+                    # Write an empty sheet to keep file valid
+                    pd.DataFrame().to_excel(writer, sheet_name='Results', index=False)
+
+            logger.info(f"Analysis results saved to {filepath} (Excel format)")
+            return
+
+        raise ValueError(f"Unsupported export format: {resolved_format}")
     
     def load_results(self, filepath: str) -> Dict[str, Any]:
         """Load analysis results from file."""

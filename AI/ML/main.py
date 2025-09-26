@@ -85,7 +85,8 @@ def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[st
         dashboard = chart_gen.create_summary_dashboard(results)
         
         # Save results
-        analyzer.save_results(output_path)
+        output_format = Path(output_path).suffix.lstrip('.').lower()
+        analyzer.save_results(output_path, format=output_format or None)
         
         # Print summary
         summary = analyzer.get_analysis_summary()
@@ -151,7 +152,8 @@ def run_database_analysis(config: Dict[str, Any], output_path: str) -> None:
         results = analyzer.predict(prepared_data)
         
         # Save results
-        analyzer.save_results(output_path)
+        output_format = Path(output_path).suffix.lstrip('.').lower()
+        analyzer.save_results(output_path, format=output_format or None)
         
         logger.info("Database analysis completed successfully!")
         
@@ -194,7 +196,12 @@ def main():
     input_group.add_argument('--sample', '-s', help='Create sample data', action='store_true')
     
     # Output options
-    parser.add_argument('--output', '-o', required=True, help='Output file path')
+    parser.add_argument(
+        '--output',
+        '-o',
+        required=True,
+        help='Output file path (extension determines format: .json, .csv, .xlsx, ... )'
+    )
     parser.add_argument('--config', '-c', help='Configuration file path (JSON)')
     
     # Analysis parameters
