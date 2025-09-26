@@ -113,6 +113,12 @@ python main.py --file data.xlsx --output results.csv
 # Generate an Excel workbook with multiple sheets
 python main.py --file data.xlsx --output results.xlsx
 
+# Save the HTML dashboard beside the main output (results_dashboard.html)
+python main.py --file data.xlsx --output results.json --dashboard-html
+
+# Save the HTML dashboard to a specific path
+python main.py --file data.xlsx --output results.json --dashboard-html reports/sepsis_run.html
+
 # Create sample data
 python main.py --sample --output sample_data.csv --n-pairs 100
 
@@ -124,6 +130,8 @@ python main.py --database --config db_config.json --output results.json
 ```
 
 > ℹ️ The CLI now infers the export format from the `--output` extension. JSON, CSV/TSV, and Excel workbooks are supported without additional flags.
+>
+> 📄 When `--dashboard-html` is provided, the CLI generates an interactive HTML report named `<output>_dashboard.html` in the same directory as the primary results unless a custom path is supplied. Existing directories will be created automatically if needed.
 
 ### Web Interface
 
