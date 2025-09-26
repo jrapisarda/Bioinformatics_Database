@@ -782,4 +782,4 @@ if __name__ == '__main__':
     print(f"Using {'mock' if USING_MOCK_MODULES else 'real'} analysis modules")
     print("Starting Gene Pair ML Analysis web application...")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
