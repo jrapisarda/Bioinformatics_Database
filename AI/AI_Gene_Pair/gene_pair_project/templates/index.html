@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Gene Pair Analysis</h1>
+
+<h2>Upload Data</h2>
+<form method="post" enctype="multipart/form-data" class="mb-4">
+    <input type="hidden" name="action" value="upload">
+    <div class="mb-3">
+        <label for="data_file" class="form-label">Select data file (CSV, Excel or JSON)</label>
+        <input class="form-control" type="file" id="data_file" name="data_file" accept=".csv,.xlsx,.xls,.json" required>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="top_n" class="form-label">Number of top recommendations</label>
+            <input type="number" class="form-control" id="top_n" name="top_n" value="20" min="1">
+        </div>
+        <div class="col-md-4">
+            <label for="baseline_gene_a" class="form-label">Baseline Gene A (positive control)</label>
+            <input type="text" class="form-control" id="baseline_gene_a" name="baseline_gene_a" value="MS4A4A">
+        </div>
+        <div class="col-md-4">
+            <label for="baseline_gene_b" class="form-label">Baseline Gene B (positive control)</label>
+            <input type="text" class="form-control" id="baseline_gene_b" name="baseline_gene_b" value="CD86">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Start Analysis</button>
+</form>
+
+<h2>Add New Rule</h2>
+<form method="post" class="mb-4">
+    <input type="hidden" name="action" value="add_rule">
+    <div class="mb-3">
+        <label for="rule_name" class="form-label">Rule Name</label>
+        <input type="text" class="form-control" id="rule_name" name="rule_name" placeholder="e.g. high_delta_effect">
+    </div>
+    <div class="mb-3">
+        <label for="rule_condition" class="form-label">Condition</label>
+        <input type="text" class="form-control" id="rule_condition" name="rule_condition" placeholder="abs_delta_effect_size > 0.5 and combined_p_value < 0.05">
+        <div class="form-text">Use Python expressions referencing dataset fields (e.g. p_ss, p_soth, abs_dz_ss, abs_delta_effect_size).</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="rule_weight" class="form-label">Weight</label>
+            <input type="number" step="0.01" class="form-control" id="rule_weight" name="rule_weight" placeholder="0.05">
+        </div>
+        <div class="col-md-8">
+            <label for="rule_explanation" class="form-label">Explanation</label>
+            <input type="text" class="form-control" id="rule_explanation" name="rule_explanation" placeholder="What does this rule capture?">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-secondary">Add Rule</button>
+</form>
+
+<h2>Current Rules</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Condition</th>
+            <th>Weight</th>
+            <th>Explanation</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rule in rules %}
+        <tr>
+            <td>{{ rule.name }}</td>
+            <td><code>{{ rule.condition }}</code></td>
+            <td>{{ "%.2f"|format(rule.weight) }}</td>
+            <td>{{ rule.explanation }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

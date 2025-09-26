@@ -191,12 +191,12 @@ class FeatureEngineering:
         zero_var_features = feature_data.columns[feature_data.var() == 0]
         feature_data = feature_data.drop(columns=zero_var_features)
         
-        # Remove features with very low variance (noise)
-        low_var_threshold = 0.001
-        low_var_features = feature_data.columns[feature_data.var() < low_var_threshold]
-        if len(low_var_features) > 0:
-            feature_data = feature_data.drop(columns=low_var_features)
-            logger.info(f"Removed {len(low_var_features)} low-variance features")
+        # Previously, features with variance below a small threshold (default 0.001) were removed.
+        # To ensure that all informative columns, including those with low variance (such as binary or near-constant
+        # features), are retained in the analysis, we no longer drop features based solely on low variance. Zero-variance
+        # features (constant columns) are still removed above to avoid degenerate cases. Retaining low-variance
+        # features allows new columns introduced for meta-analysis, such as direction consistency (often 0 or 1) and
+        # combined effect sizes, to be considered by the ML model.
         
         logger.info(f"Selected {len(feature_data.columns)} features after cleaning")
         

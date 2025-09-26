@@ -1,0 +1,550 @@
+{
+  "analysis_summary": {
+    "total_pairs": 6786,
+    "outliers_detected": 1080,
+    "clusters_found": 0,
+    "positive_control_validated": true
+  },
+  "recommendations": [
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "SULF2",
+      "rules_score": 1.0,
+      "ml_confidence": 0.6517522902207078,
+      "baseline_similarity": 0.8583247737626296,
+      "combined_score": 0.8497782563297737,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 1,
+      "statistical_measures": {
+        "p_ss": 0.001066414164603,
+        "p_soth": 2.2080100192667373e-08,
+        "dz_ss_mean": -0.6553528878546621,
+        "dz_soth_mean": -1.0319400934544876,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' satisfied (+0.30): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "MS4A4A",
+      "gene_b": "CD86",
+      "rules_score": 0.75,
+      "ml_confidence": 0.6236790099066409,
+      "baseline_similarity": 1.0,
+      "combined_score": 0.7565108015316172,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 2,
+      "statistical_measures": {
+        "p_ss": 0.0751258303141524,
+        "p_soth": 0.00167138639904,
+        "dz_ss_mean": -0.3564146086279911,
+        "dz_soth_mean": -1.0896408132773674,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' not satisfied (+0.00): Both conditions show statistical significance",
+        "Rule 'effect_size' satisfied (+0.30): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "MTMR11",
+      "gene_b": "RAB20",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6595547668092645,
+      "baseline_similarity": 0.8913885481109683,
+      "combined_score": 0.7362580107667286,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 3,
+      "statistical_measures": {
+        "p_ss": 0.0120195015994073,
+        "p_soth": 0.0001916941970725,
+        "dz_ss_mean": -0.5029853470204603,
+        "dz_soth_mean": -0.9079984783269044,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "ARHGEF10L",
+      "gene_b": "CD82",
+      "rules_score": 0.7,
+      "ml_confidence": 0.647294082981503,
+      "baseline_similarity": 0.8909808859607133,
+      "combined_score": 0.7221959808204103,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 4,
+      "statistical_measures": {
+        "p_ss": 0.0394537783913393,
+        "p_soth": 3.0682839037954324e-05,
+        "dz_ss_mean": -0.4124347880597288,
+        "dz_soth_mean": -0.8621581250781434,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "CD86",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6415397454687499,
+      "baseline_similarity": 0.8721130049100505,
+      "combined_score": 0.7196783876391366,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 5,
+      "statistical_measures": {
+        "p_ss": 0.0204962029843649,
+        "p_soth": 2.8846499922075e-07,
+        "dz_ss_mean": -0.4640467883748139,
+        "dz_soth_mean": -0.8367685695842169,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "ADA2",
+      "gene_b": "MERTK",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6444194198015387,
+      "baseline_similarity": 0.8704868447579611,
+      "combined_score": 0.7160186831505699,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 6,
+      "statistical_measures": {
+        "p_ss": 0.0353448204992701,
+        "p_soth": 5.6920358166845375e-06,
+        "dz_ss_mean": -0.4214394235412236,
+        "dz_soth_mean": -0.8190233006773479,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "RGCC",
+      "gene_b": "PLAC8",
+      "rules_score": 0.7,
+      "ml_confidence": 0.5813345667691535,
+      "baseline_similarity": 0.9061699930445224,
+      "combined_score": 0.7079676947973053,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 7,
+      "statistical_measures": {
+        "p_ss": 0.0233344318069115,
+        "p_soth": 0.0002228625649645,
+        "dz_ss_mean": -0.4541888453943388,
+        "dz_soth_mean": -0.9132943219925352,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "CD86",
+      "gene_b": "RAB20",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6133386884572862,
+      "baseline_similarity": 0.8759108505311676,
+      "combined_score": 0.7056012041301304,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 8,
+      "statistical_measures": {
+        "p_ss": 0.0408860996642088,
+        "p_soth": 0.000130292725567,
+        "dz_ss_mean": -0.4094829844123723,
+        "dz_soth_mean": -0.8283106410092153,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "TTYH2",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6066954392713233,
+      "baseline_similarity": 0.8653008054646009,
+      "combined_score": 0.7033948181214082,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 9,
+      "statistical_measures": {
+        "p_ss": 0.0267538417842447,
+        "p_soth": 5.334760537101246e-06,
+        "dz_ss_mean": -0.4436100086343304,
+        "dz_soth_mean": -0.8136212667251617,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "ADA2",
+      "gene_b": "LDLR",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6256726164006116,
+      "baseline_similarity": 0.8155882365613675,
+      "combined_score": 0.7026174250679197,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 10,
+      "statistical_measures": {
+        "p_ss": 0.0084379881344778,
+        "p_soth": 1.5197869629446359e-09,
+        "dz_ss_mean": -0.5275083258602582,
+        "dz_soth_mean": -0.7321815044697231,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "UNK",
+      "gene_b": "LBH",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6398554395572043,
+      "baseline_similarity": 0.7823811747664657,
+      "combined_score": 0.6985878532864677,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 11,
+      "statistical_measures": {
+        "p_ss": 0.0062879593034892,
+        "p_soth": 4.5350922794895616e-08,
+        "dz_ss_mean": -0.5472050241664843,
+        "dz_soth_mean": -0.6626727147600362,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "ARHGEF10L",
+      "rules_score": 0.7,
+      "ml_confidence": 0.589150241170449,
+      "baseline_similarity": 0.8098544809037099,
+      "combined_score": 0.6939008436624197,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 12,
+      "statistical_measures": {
+        "p_ss": 0.0033957008186054,
+        "p_soth": 5.420199844508032e-10,
+        "dz_ss_mean": -0.586671351426058,
+        "dz_soth_mean": -0.7520761125877088,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.678147614483152e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "FGD2",
+      "gene_b": "DDAH2",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6095195476528577,
+      "baseline_similarity": 0.7938522224661055,
+      "combined_score": 0.6914683704459179,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 13,
+      "statistical_measures": {
+        "p_ss": 0.0065822890831341,
+        "p_soth": 7.016915337665354e-08,
+        "dz_ss_mean": -0.5441800535852491,
+        "dz_soth_mean": -0.6883950260289857,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "NPL",
+      "gene_b": "RAB20",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6074029035166928,
+      "baseline_similarity": 0.8036831098315094,
+      "combined_score": 0.6913645537273715,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 14,
+      "statistical_measures": {
+        "p_ss": 0.0098780798467075,
+        "p_soth": 7.847363203694613e-09,
+        "dz_ss_mean": -0.5167030416540832,
+        "dz_soth_mean": -0.6993975000737873,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "NPL",
+      "gene_b": "S100P",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6334921197504457,
+      "baseline_similarity": 0.7255974398354541,
+      "combined_score": 0.6855886677259065,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 15,
+      "statistical_measures": {
+        "p_ss": 0.0013451027798621,
+        "p_soth": 2.1900945728070558e-06,
+        "dz_ss_mean": -0.6420924985657351,
+        "dz_soth_mean": -0.57377793746692,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "N4BP2L1",
+      "gene_b": "MKI67",
+      "rules_score": 0.7,
+      "ml_confidence": 0.587212147010846,
+      "baseline_similarity": 0.8081864490752639,
+      "combined_score": 0.6783364764816808,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 16,
+      "statistical_measures": {
+        "p_ss": 0.0303974663378876,
+        "p_soth": 1.598995980067741e-08,
+        "dz_ss_mean": -0.4335529156751692,
+        "dz_soth_mean": -0.6847210114411308,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "PSMF1",
+      "gene_b": "ZDHHC19",
+      "rules_score": 0.7,
+      "ml_confidence": 0.5779351841006476,
+      "baseline_similarity": 0.8103531315437247,
+      "combined_score": 0.6757921840092481,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 17,
+      "statistical_measures": {
+        "p_ss": 0.0302212530275496,
+        "p_soth": 1.26705961278617e-08,
+        "dz_ss_mean": -0.4340147544704793,
+        "dz_soth_mean": -0.6895511692357852,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "DHCR7",
+      "gene_b": "CDK10",
+      "rules_score": 0.7,
+      "ml_confidence": 0.6169372327033908,
+      "baseline_similarity": 0.7681012715219405,
+      "combined_score": 0.6755315713411331,
+      "is_high_confidence": true,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 18,
+      "statistical_measures": {
+        "p_ss": 0.0345055665021094,
+        "p_soth": 1.967640684608085e-06,
+        "dz_ss_mean": -0.4233876122105048,
+        "dz_soth_mean": -0.5958178571419241,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "SLC25A37",
+      "gene_b": "ZDHHC19",
+      "rules_score": 0.7,
+      "ml_confidence": 0.5913697428380937,
+      "baseline_similarity": 0.7727710639012969,
+      "combined_score": 0.6737613936467476,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 19,
+      "statistical_measures": {
+        "p_ss": 0.0137562507376252,
+        "p_soth": 2.9884211127928495e-07,
+        "dz_ss_mean": -0.49337149858167,
+        "dz_soth_mean": -0.620931945339322,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    },
+    {
+      "gene_a": "SLC39A8",
+      "gene_b": "ZNF823",
+      "rules_score": 0.7,
+      "ml_confidence": 0.5860627869892427,
+      "baseline_similarity": 0.7560189568945271,
+      "combined_score": 0.6702897776736335,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "cluster_label": -1,
+      "rank": 20,
+      "statistical_measures": {
+        "p_ss": 0.0071261293395976,
+        "p_soth": 3.3900888279037034e-05,
+        "dz_ss_mean": -0.5388973783817324,
+        "dz_soth_mean": -0.5981133636041502,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      },
+      "rule_explanations": [
+        "Rule 'statistical_significance' satisfied (+0.25): Both conditions show statistical significance",
+        "Rule 'effect_size' not satisfied (+0.00): Large effect sizes in both conditions",
+        "Rule 'z_score_strength' satisfied (+0.20): Strong z-scores across conditions",
+        "Rule 'fdr_correction' satisfied (+0.15): Survives FDR correction",
+        "Rule 'consistency' satisfied (+0.10): Low heterogeneity across studies"
+      ]
+    }
+  ]
+}

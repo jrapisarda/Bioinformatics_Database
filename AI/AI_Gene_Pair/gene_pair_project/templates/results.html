@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Analysis Results</h1>
+
+<h2>Summary</h2>
+<ul>
+    <li><strong>Total pairs analysed:</strong> {{ summary.total_pairs }}</li>
+    <li><strong>Outliers detected:</strong> {{ summary.outliers_detected }}</li>
+    <li><strong>Clusters found:</strong> {{ summary.clusters_found }}</li>
+    <li><strong>Positive control in top results:</strong> {{ 'Yes' if summary.positive_control_validated else 'No' }}</li>
+</ul>
+
+<h2>Top Recommendations</h2>
+<div class="table-responsive">
+<table class="table table-bordered table-hover" id="recommendations-table">
+    <thead class="table-light">
+        <tr>
+            <th>Rank</th>
+            <th>Gene A</th>
+            <th>Gene B</th>
+            <th>Combined Score</th>
+            <th>ML Score</th>
+            <th>Rule Score</th>
+            <th>Baseline Similarity</th>
+            <th>Outlier</th>
+            <th>High Confidence</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rec in recommendations %}
+        <tr>
+            <td>{{ rec.rank }}</td>
+            <td>{{ rec.gene_a }}</td>
+            <td>{{ rec.gene_b }}</td>
+            <td>{{ "%.3f"|format(rec.combined_score) }}</td>
+            <td>{{ "%.3f"|format(rec.ml_confidence) }}</td>
+            <td>{{ "%.3f"|format(rec.rules_score) }}</td>
+            <td>{{ "%.3f"|format(rec.baseline_similarity) }}</td>
+            <td>{{ 'Yes' if rec.is_outlier else 'No' }}</td>
+            <td>{{ 'Yes' if rec.is_high_confidence else 'No' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<h2 class="mt-4">Effect Size Scatter Plot</h2>
+<div id="scatter" style="height: 500px;"></div>
+
+<script type="text/javascript">
+    const scatterData = {{ scatter_data | tojson }};
+    Plotly.newPlot('scatter', scatterData.data, scatterData.layout);
+</script>
+
+<p class="mt-3">
+    <a class="btn btn-secondary" href="{{ url_for('download_results', session_id=request.view_args['session_id']) }}">Download Results (JSON)</a>
+    <a class="btn btn-primary" href="{{ url_for('index') }}">Start New Analysis</a>
+</p>
+
+{% endblock %}

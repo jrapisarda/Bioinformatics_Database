@@ -208,7 +208,15 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
 
     # Aggregate by pair_id via random-effects meta
     rows = []
+    # Precompute group-level meta-analysis metrics for each pair
+    # We'll compute weighted correlation (r), standard error on r, heterogeneity (I2), z-statistic and p-value
+    # for each illness group (control, sepsis, septic shock). We also derive differential correlation
+    # statistics (delta r and associated z/p values) and combined composite metrics.
+    # Create a mapping of valid groups for clarity
+    valid_groups = ["control", "sepsis", "septic shock"]
+
     for pid, g in per_study.groupby("pair_id"):
+        # Random effects meta for shock vs sepsis (dz_ss) and shock vs others (dz_soth)
         eff_ss, ses_ss     = g["dz_ss"].values,   g["se_ss"].values
         eff_soth, ses_soth = g["dz_soth"].values, g["se_soth"].values
 
@@ -218,7 +226,8 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
         kappa_ss    = sign_agreement(eff_ss, re_ss.get("mean", np.nan))
         kappa_soth  = sign_agreement(eff_soth, re_soth.get("mean", np.nan))
 
-        rows.append(dict(
+        # Base row with existing metrics
+        row_dict = dict(
             pair_id=pid,
             n_studies_ss = int(np.unique(g.loc[~np.isnan(eff_ss), "study_key"]).size),
             n_studies_soth = int(np.unique(g.loc[~np.isnan(eff_soth), "study_key"]).size),
@@ -245,7 +254,176 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
             kappa_soth = kappa_soth,
             abs_dz_ss = abs(re_ss.get("mean", np.nan)),
             abs_dz_soth = abs(re_soth.get("mean", np.nan)),
-        ))
+        )
+
+        # Compute group-level meta-analysis metrics using original df
+        # Filter original df for current pair_id
+        pair_df = df[df["pair_id"] == pid]
+        # Initialize storage for weighted correlations and other statistics
+        r_means = {}
+        se_r_vals = {}
+        I2_vals = {}
+        z_stats = {}
+        p_vals = {}
+        sample_counts = {}
+
+        for grp in valid_groups:
+            grp_data = pair_df[pair_df["group"] == grp]
+            # z values and effective sample sizes
+            z_vals = grp_data["z"].dropna().values
+            # n_eff already computed on df as n_samples - 3; ensure positive
+            n_eff_vals = grp_data["n_eff"].dropna().values
+            # standard error on z for each study
+            se_z_vals = np.where(n_eff_vals > 0, 1.0 / np.sqrt(n_eff_vals), np.nan)
+            if z_vals.size >= 1 and se_z_vals.size >= 1:
+                # run random-effects meta-analysis on z-scale
+                meta = dl_random_effects(z_vals, se_z_vals)
+                m = meta.get("mean", np.nan)
+                se_z = meta.get("se", np.nan)
+                I2 = meta.get("I2", np.nan)
+                z_stat = meta.get("z", np.nan)
+                p_val = meta.get("p", np.nan)
+                # back-transform to r
+                r_mean = math.tanh(m) if (m is not None and np.isfinite(m)) else np.nan
+                # standard error of r using delta method: se_r = se_z * (1 - r_mean**2)
+                se_r = se_z * (1.0 - r_mean**2) if (se_z is not None and np.isfinite(se_z) and np.isfinite(r_mean)) else np.nan
+                # store
+                r_means[grp] = r_mean
+                se_r_vals[grp] = se_r
+                I2_vals[grp] = I2
+                z_stats[grp] = z_stat
+                p_vals[grp] = p_val
+                # total samples for power score calculation
+                sample_counts[grp] = grp_data["n_samples"].dropna().sum()
+            else:
+                r_means[grp] = np.nan
+                se_r_vals[grp] = np.nan
+                I2_vals[grp] = np.nan
+                z_stats[grp] = np.nan
+                p_vals[grp] = np.nan
+                sample_counts[grp] = grp_data["n_samples"].dropna().sum()
+
+        # Add group-level statistics to the row
+        for grp in valid_groups:
+            prefix = grp.replace(" ", "_")  # e.g. 'septic shock' -> 'septic_shock'
+            row_dict[f"{prefix}_weighted_r"] = r_means.get(grp, np.nan)
+            row_dict[f"{prefix}_se_r"]       = se_r_vals.get(grp, np.nan)
+            row_dict[f"{prefix}_I2"]         = I2_vals.get(grp, np.nan)
+            row_dict[f"{prefix}_z_stat"]     = z_stats.get(grp, np.nan)
+            row_dict[f"{prefix}_p_value"]    = p_vals.get(grp, np.nan)
+            row_dict[f"{prefix}_n_samples"] = sample_counts.get(grp, 0.0)
+
+        # Differential correlation metrics between groups
+        # Define helper to compute delta, z_diff and p_diff
+        def compute_delta_zp(g1, g2):
+            r1, r2 = r_means.get(g1, np.nan), r_means.get(g2, np.nan)
+            se1, se2 = se_r_vals.get(g1, np.nan), se_r_vals.get(g2, np.nan)
+            if all(np.isfinite([r1, r2, se1, se2])) and se1 + se2 > 0:
+                delta = r1 - r2
+                se_diff = math.sqrt(se1**2 + se2**2)
+                z_diff = delta / se_diff if se_diff != 0 else np.nan
+                p_diff = 2 * (1.0 - norm.cdf(abs(z_diff))) if np.isfinite(z_diff) else np.nan
+                return delta, se_diff, z_diff, p_diff
+            else:
+                return (np.nan, np.nan, np.nan, np.nan)
+
+        # Compute differences for shock-control, shock-sepsis, and sepsis-control
+        delta_sc, se_sc, z_sc, p_sc = compute_delta_zp("septic shock", "control")
+        delta_ss, se_ss_, z_ss_, p_ss_ = compute_delta_zp("septic shock", "sepsis")
+        delta_sc2, se_sc2, z_sc2, p_sc2 = compute_delta_zp("sepsis", "control")
+
+        row_dict.update({
+            "delta_r_shock_control": delta_sc,
+            "se_diff_shock_control": se_sc,
+            "z_diff_shock_control": z_sc,
+            "p_diff_shock_control": p_sc,
+            "delta_r_shock_sepsis": delta_ss,
+            "se_diff_shock_sepsis": se_ss_,
+            "z_diff_shock_sepsis": z_ss_,
+            "p_diff_shock_sepsis": p_ss_,
+            "delta_r_sepsis_control": delta_sc2,
+            "se_diff_sepsis_control": se_sc2,
+            "z_diff_sepsis_control": z_sc2,
+            "p_diff_sepsis_control": p_sc2,
+        })
+
+        # Combined statistics across all three groups
+        # Combined p-value as geometric mean of group p-values
+        p_list = [p_vals.get(g, np.nan) for g in valid_groups if np.isfinite(p_vals.get(g, np.nan))]
+        if len(p_list) == 3:
+            combined_p = math.sqrt(p_list[0] * p_list[1] * p_list[2])
+        else:
+            combined_p = np.nan
+        # Combined effect size as geometric mean of absolute r values
+        r_list = [abs(r_means.get(g, np.nan)) for g in valid_groups if np.isfinite(r_means.get(g, np.nan))]
+        if len(r_list) == 3:
+            combined_effect = math.sqrt(r_list[0] * r_list[1] * r_list[2])
+        else:
+            combined_effect = np.nan
+        # Combined z statistic (root-sum-of-squares)
+        z_list = [z_stats.get(g, np.nan) for g in valid_groups if np.isfinite(z_stats.get(g, np.nan))]
+        if len(z_list) == 3:
+            combined_z = math.sqrt(z_list[0]**2 + z_list[1]**2 + z_list[2]**2)
+        else:
+            combined_z = np.nan
+        # Total sample size across all groups
+        total_samples = sum(sample_counts.get(g, 0.0) for g in valid_groups)
+        if np.isfinite(combined_z) and total_samples > 0:
+            power_score = (combined_z ** 2) / ((combined_z ** 2) + total_samples)
+        else:
+            power_score = np.nan
+        # Consistency metrics using mean I2 across groups (convert percent to proportion)
+        I2_vals_list = [I2_vals.get(g, np.nan) for g in valid_groups if np.isfinite(I2_vals.get(g, np.nan))]
+        if len(I2_vals_list) == 3:
+            mean_I2 = np.mean([v / 100.0 for v in I2_vals_list])
+            consistency_score = 1.0 / (1.0 + mean_I2)
+        else:
+            consistency_score = np.nan
+        # Direction consistency: all r_means have same sign
+        if all(np.isfinite([r_means.get(g, np.nan) for g in valid_groups])):
+            signs = [math.copysign(1, r_means[g]) for g in valid_groups]
+            direction_consistency = 1.0 if len(set(signs)) == 1 else 0.0
+        else:
+            direction_consistency = np.nan
+        # Magnitude consistency: 1 - coefficient of variation of absolute r values
+        if len(r_list) == 3 and np.mean(r_list) > 0:
+            cv = np.std(r_list) / (np.mean(r_list) + 1e-10)
+            magnitude_consistency = max(0.0, 1.0 - cv)
+        else:
+            magnitude_consistency = np.nan
+        # Expression-based features using gene expression columns (if available)
+        # We take first non-null values for geneA and geneB expression in sepsis and control
+        try:
+            geneA_sepsis = pair_df["geneA_ss_sepsis"].dropna().iloc[0] if not pair_df["geneA_ss_sepsis"].dropna().empty else np.nan
+            geneA_ctrl   = pair_df["geneA_ss_ctrl"].dropna().iloc[0]   if not pair_df["geneA_ss_ctrl"].dropna().empty else np.nan
+            geneB_sepsis = pair_df["geneB_ss_sepsis"].dropna().iloc[0] if not pair_df["geneB_ss_sepsis"].dropna().empty else np.nan
+            geneB_ctrl   = pair_df["geneB_ss_ctrl"].dropna().iloc[0]   if not pair_df["geneB_ss_ctrl"].dropna().empty else np.nan
+            # Compute log2 fold change; add small constant to avoid log of zero
+            fc_a = np.log2((abs(geneA_sepsis) + 1e-10) / (abs(geneA_ctrl) + 1e-10)) if (np.isfinite(geneA_sepsis) and np.isfinite(geneA_ctrl)) else np.nan
+            fc_b = np.log2((abs(geneB_sepsis) + 1e-10) / (abs(geneB_ctrl) + 1e-10)) if (np.isfinite(geneB_sepsis) and np.isfinite(geneB_ctrl)) else np.nan
+            expression_change_mag = math.sqrt(fc_a**2 + fc_b**2) if all(np.isfinite([fc_a, fc_b])) else np.nan
+            expression_asymmetry = max(abs(fc_a), abs(fc_b)) if all(np.isfinite([fc_a, fc_b])) else np.nan
+        except Exception:
+            fc_a = fc_b = expression_change_mag = expression_asymmetry = np.nan
+
+        # Update row_dict with combined and expression features
+        row_dict.update({
+            "combined_p_value": combined_p,
+            "combined_effect_size": combined_effect,
+            "combined_z_score": combined_z,
+            "power_score": power_score,
+            "consistency_score": consistency_score,
+            "direction_consistency": direction_consistency,
+            "magnitude_consistency": magnitude_consistency,
+            "geneA_log2fc": fc_a,
+            "geneB_log2fc": fc_b,
+            "expression_change_magnitude": expression_change_mag,
+            "expression_asymmetry": expression_asymmetry,
+            "total_samples": total_samples,
+        })
+
+        # Append row
+        rows.append(row_dict)
 
     met = pd.DataFrame(rows)
     # FDR across all pairs
