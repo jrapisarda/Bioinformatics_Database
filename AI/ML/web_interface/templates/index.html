@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}Gene Pair ML Analysis - Home{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-dna icon-gradient me-3"></i>
+                Gene Pair ML Analysis
+            </h1>
+            <p class="lead mb-4">
+                Advanced bioinformatics platform for gene pair correlation analysis using ensemble machine learning 
+                and rules-based ranking to identify significant genetic relationships in meta-analysis data.
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{{ url_for('upload_file') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-upload me-2"></i>Start Analysis
+                </a>
+                <a href="{{ url_for('about') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-info-circle me-2"></i>Learn More
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-upload fa-3x icon-gradient"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Easy Data Upload</h5>
+                    <p class="card-text">
+                        Upload your meta-analysis data in Excel, CSV, or JSON formats. 
+                        Our system validates and processes your data automatically.
+                    </p>
+                    <a href="{{ url_for('upload_file') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Upload Data
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-cogs fa-3x icon-gradient"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Configurable Analysis</h5>
+                    <p class="card-text">
+                        Customize your analysis with adjustable ML parameters, 
+                        configurable ranking rules, and ensemble method selection.
+                    </p>
+                    <a href="{{ url_for('rules_configuration') }}" class="btn btn-primary">
+                        <i class="fas fa-arrow-right me-1"></i>Configure Rules
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line fa-3x icon-gradient"></i>
+                    </div>
+                    <h5 class="card-title fw-bold">Interactive Dashboard</h5>
+                    <p class="card-text">
+                        Explore results with interactive visualizations, 
+                        detailed statistics, and comprehensive gene pair recommendations.
+                    </p>
+                    <a href="#" class="btn btn-primary" onclick="showComingSoon()">
+                        <i class="fas fa-arrow-right me-1"></i>View Demo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list-ol me-2"></i>
+                        How It Works
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-3 text-center">
+                            <div class="mb-3">
+                                <span class="badge bg-primary rounded-circle p-3" style="font-size: 1.5rem;">1</span>
+                            </div>
+                            <h6 class="fw-bold">Upload Data</h6>
+                            <p class="small text-muted">
+                                Upload your meta-analysis file or connect to a database
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <div class="mb-3">
+                                <span class="badge bg-primary rounded-circle p-3" style="font-size: 1.5rem;">2</span>
+                            </div>
+                            <h6 class="fw-bold">Configure Analysis</h6>
+                            <p class="small text-muted">
+                                Set parameters and customize ranking rules
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <div class="mb-3">
+                                <span class="badge bg-primary rounded-circle p-3" style="font-size: 1.5rem;">3</span>
+                            </div>
+                            <h6 class="fw-bold">Run Analysis</h6>
+                            <p class="small text-muted">
+                                Ensemble ML algorithms process your data
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-3 text-center">
+                            <div class="mb-3">
+                                <span class="badge bg-primary rounded-circle p-3" style="font-size: 1.5rem;">4</span>
+                            </div>
+                            <h6 class="fw-bold">Explore Results</h6>
+                            <p class="small text-muted">
+                                Interactive dashboard with recommendations
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-server me-2"></i>
+                        System Status
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Web Interface</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>Analysis Engine</span>
+                        <span class="badge bg-warning">Checking...</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Export Functionality</span>
+                        <span class="badge bg-warning">Checking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-clock me-2"></i>
+                        No recent activity. Start your first analysis!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showComingSoon() {
+    alert('Coming soon! This feature will be available once the system is fully configured.');
+}
+
+// Check system status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Simulate status check
+    setTimeout(() => {
+        let badges = document.querySelectorAll('.badge');
+        badges.forEach(badge => {
+            if (badge.textContent === 'Checking...') {
+                badge.className = 'badge bg-success';
+                badge.textContent = 'Ready';
+            }
+        });
+    }, 2000);
+});
+</script>
+{% endblock %}

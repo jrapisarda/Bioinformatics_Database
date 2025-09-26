@@ -1,0 +1,506 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Results - Gene Pair ML Analysis{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('upload_file') }}">Upload</a></li>
+                    <li class="breadcrumb-item"><a href="#">Analyze</a></li>
+                    <li class="breadcrumb-item active">Results</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2>
+                        <i class="fas fa-chart-line icon-gradient me-2"></i>
+                        Analysis Results
+                    </h2>
+                    <p class="text-muted">Interactive dashboard showing gene pair analysis results and recommendations.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-primary" onclick="refreshResults()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                    <a href="{{ url_for('export_results', session_id=session_id) }}" class="btn btn-success">
+                        <i class="fas fa-download me-1"></i>Export Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="fas fa-dna fa-2x text-primary"></i>
+                    </div>
+                    <h4 class="text-primary mb-0" id="totalPairs">{{ results.summary_stats.total_pairs }}</h4>
+                    <p class="text-muted mb-0 small">Total Pairs</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="fas fa-exclamation-triangle fa-2x text-warning"></i>
+                    </div>
+                    <h4 class="text-warning mb-0" id="outliersDetected">{{ results.summary_stats.outliers_detected }}</h4>
+                    <p class="text-muted mb-0 small">Outliers Detected</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="fas fa-star fa-2x text-success"></i>
+                    </div>
+                    <h4 class="text-success mb-0" id="recommendationsCount">{{ results.recommendations|length }}</h4>
+                    <p class="text-muted mb-0 small">Recommendations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="mb-2">
+                        <i class="fas fa-check-circle fa-2x text-info"></i>
+                    </div>
+                    <h4 class="text-info mb-0" id="positiveControl">
+                        {% if results.summary_stats.positive_control_validated %}
+                            <i class="fas fa-check text-success"></i>
+                        {% else %}
+                            <i class="fas fa-times text-danger"></i>
+                        {% endif %}
+                    </h4>
+                    <p class="text-muted mb-0 small">Positive Control</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visualization Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#ranking-tab">
+                                <i class="fas fa-trophy me-1"></i>Top Recommendations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#boxplot-tab">
+                                <i class="fas fa-chart-bar me-1"></i>Effect Size Distribution
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#scatter-tab">
+                                <i class="fas fa-braille me-1"></i>Correlation Scatter
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#clustering-tab">
+                                <i class="fas fa-project-diagram me-1"></i>Clustering Results
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Ranking Tab -->
+                        <div class="tab-pane fade show active" id="ranking-tab">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="recommendationsTable">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Rank</th>
+                                            <th>Gene A</th>
+                                            <th>Gene B</th>
+                                            <th>Combined Score</th>
+                                            <th>ML Confidence</th>
+                                            <th>High Confidence</th>
+                                            <th>Outlier</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for rec in results.recommendations %}
+                                        <tr class="{% if rec.is_high_confidence %}table-success{% elif rec.is_outlier %}table-warning{% endif %}">
+                                            <td><span class="badge bg-primary">{{ rec.rank }}</span></td>
+                                            <td><strong>{{ rec.gene_a }}</strong></td>
+                                            <td><strong>{{ rec.gene_b }}</strong></td>
+                                            <td>
+                                                <div class="progress" style="height: 20px;">
+                                                    <div class="progress-bar" style="width: {{ rec.combined_score * 100 }}%">
+                                                        {{ "%.2f"|format(rec.combined_score) }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {% if rec.ml_confidence >= 0.8 %}
+                                                    <span class="badge bg-success">{{ "%.1f"|format(rec.ml_confidence * 100) }}%</span>
+                                                {% elif rec.ml_confidence >= 0.6 %}
+                                                    <span class="badge bg-warning">{{ "%.1f"|format(rec.ml_confidence * 100) }}%</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ "%.1f"|format(rec.ml_confidence * 100) }}%</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if rec.is_high_confidence %}
+                                                    <i class="fas fa-check text-success"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times text-muted"></i>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if rec.is_outlier %}
+                                                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                                                {% else %}
+                                                    <i class="fas fa-times text-muted"></i>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary" 
+                                                        onclick="showDetails('{{ rec.gene_a }}', '{{ rec.gene_b }}')">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Box Plot Tab -->
+                        <div class="tab-pane fade" id="boxplot-tab">
+                            <div id="boxplotChart" style="height: 400px;">
+                                <div class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Loading box plot visualization...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scatter Plot Tab -->
+                        <div class="tab-pane fade" id="scatter-tab">
+                            <div id="scatterChart" style="height: 400px;">
+                                <div class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Loading scatter plot visualization...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Clustering Tab -->
+                        <div class="tab-pane fade" id="clustering-tab">
+                            <div id="clusteringChart" style="height: 400px;">
+                                <div class="text-center py-5">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 text-muted">Loading clustering visualization...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Statistics -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-calculator me-2"></i>
+                        Statistical Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <strong>Significant Pairs (SS):</strong>
+                            <span class="badge bg-primary ms-1">{{ results.summary_stats.significant_pairs_ss }}</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Significant Pairs (SOTH):</strong>
+                            <span class="badge bg-primary ms-1">{{ results.summary_stats.significant_pairs_soth }}</span>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <strong>Large Effect Pairs:</strong>
+                            <span class="badge bg-warning ms-1">{{ results.summary_stats.large_effect_pairs }}</span>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <strong>Clusters Found:</strong>
+                            <span class="badge bg-info ms-1">{{ results.summary_stats.clusters_found }}</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mt-3">
+                        <h6>Analysis Parameters:</h6>
+                        <ul class="list-unstyled small">
+                            <li><strong>Ensemble Methods:</strong> Isolation Forest, DBSCAN, PCA, Gaussian Mixture</li>
+                            <li><strong>Contamination Rate:</strong> 0.1</li>
+                            <li><strong>Positive Control:</strong> MS4A4A-CD86</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Analysis Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Analysis ID:</strong><br>
+                        <code class="small">{{ session_id }}</code>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        <span class="badge bg-success ms-1">Completed</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Silhouette Score:</strong>
+                        <span class="badge bg-secondary ms-1">{{ "%.3f"|format(results.summary_stats.silhouette_score) }}</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mt-3">
+                        <h6>Export Options:</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ url_for('export_results', session_id=session_id) }}" class="btn btn-success btn-sm">
+                                <i class="fas fa-file-excel me-1"></i>Excel
+                            </a>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="exportCSV()">
+                                <i class="fas fa-file-csv me-1"></i>CSV
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="exportJSON()">
+                                <i class="fas fa-file-code me-1"></i>JSON
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gene Pair Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Gene Pair Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detailsContent">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize visualizations when tabs are shown
+document.addEventListener('DOMContentLoaded', function() {
+    // Load box plot when tab is shown
+    document.querySelector('a[href="#boxplot-tab"]').addEventListener('shown.bs.tab', function() {
+        loadBoxPlot();
+    });
+    
+    // Load scatter plot when tab is shown
+    document.querySelector('a[href="#scatter-tab"]').addEventListener('shown.bs.tab', function() {
+        loadScatterPlot();
+    });
+    
+    // Load clustering visualization when tab is shown
+    document.querySelector('a[href="#clustering-tab"]').addEventListener('shown.bs.tab', function() {
+        loadClusteringPlot();
+    });
+});
+
+function loadBoxPlot() {
+    const chartDiv = document.getElementById('boxplotChart');
+    
+    // Sample data for demonstration
+    const data = [
+        {
+            y: [-0.66, -0.45, -0.23, -0.12, 0.05, 0.18, 0.34, 0.52, 0.73, 0.85],
+            type: 'box',
+            name: 'Septic Shock Effect Size',
+            marker: { color: '#2E8B8B' },
+            boxpoints: 'outliers'
+        },
+        {
+            y: [-1.03, -0.78, -0.56, -0.34, -0.15, 0.12, 0.28, 0.45, 0.62, 0.75],
+            type: 'box',
+            name: 'Other Sepsis Effect Size',
+            marker: { color: '#CD853F' },
+            boxpoints: 'outliers'
+        }
+    ];
+    
+    const layout = {
+        title: 'Effect Size Distribution by Condition',
+        xaxis: { title: 'Condition' },
+        yaxis: { title: 'Effect Size (Cohen\'s d)' },
+        showlegend: false,
+        margin: { t: 50, r: 50, b: 80, l: 80 }
+    };
+    
+    Plotly.newPlot(chartDiv, data, layout, {responsive: true});
+}
+
+function loadScatterPlot() {
+    const chartDiv = document.getElementById('scatterChart');
+    
+    // Sample data for demonstration
+    const recommendations = {{ results.recommendations|tojson }};
+    
+    const x = recommendations.map(r => r.statistical_measures.dz_ss_mean);
+    const y = recommendations.map(r => r.statistical_measures.dz_soth_mean);
+    const text = recommendations.map(r => `${r.gene_a}-${r.gene_b}`);
+    const colors = recommendations.map(r => r.combined_score);
+    
+    const data = [{
+        x: x,
+        y: y,
+        mode: 'markers',
+        type: 'scatter',
+        text: text,
+        marker: {
+            size: 12,
+            color: colors,
+            colorscale: 'Viridis',
+            colorbar: { title: 'Combined Score' },
+            line: { width: 1, color: 'white' }
+        },
+        hovertemplate: '<b>%{text}</b><br>' +
+                      'SS Effect: %{x:.3f}<br>' +
+                      'SOTH Effect: %{y:.3f}<br>' +
+                      'Score: %{marker.color:.3f}<extra></extra>'
+    }];
+    
+    const layout = {
+        title: 'Gene Pair Correlation Scatter Plot',
+        xaxis: { title: 'Effect Size - Septic Shock' },
+        yaxis: { title: 'Effect Size - Other Sepsis' },
+        margin: { t: 50, r: 50, b: 80, l: 80 }
+    };
+    
+    Plotly.newPlot(chartDiv, data, layout, {responsive: true});
+}
+
+function loadClusteringPlot() {
+    const chartDiv = document.getElementById('clusteringChart');
+    
+    // Sample clustering visualization
+    const data = [{
+        values: [20, 15, 10, 8, 5],
+        labels: ['Cluster 1', 'Cluster 2', 'Cluster 3', 'Cluster 4', 'Outliers'],
+        type: 'pie',
+        marker: {
+            colors: ['#2E8B8B', '#CD853F', '#8B4513', '#4682B4', '#DC143C']
+        },
+        hovertemplate: '<b>%{label}</b><br>' +
+                      'Count: %{value}<br>' +
+                      'Percentage: %{percent}<extra></extra>'
+    }];
+    
+    const layout = {
+        title: 'Gene Pair Clustering Distribution',
+        margin: { t: 50, r: 50, b: 50, l: 50 }
+    };
+    
+    Plotly.newPlot(chartDiv, data, layout, {responsive: true});
+}
+
+function showDetails(geneA, geneB) {
+    // Find the recommendation data
+    const recommendations = {{ results.recommendations|tojson }};
+    const rec = recommendations.find(r => r.gene_a === geneA && r.gene_b === geneB);
+    
+    if (rec) {
+        const content = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Gene Information</h6>
+                    <p><strong>Gene A:</strong> ${rec.gene_a}</p>
+                    <p><strong>Gene B:</strong> ${rec.gene_b}</p>
+                    <p><strong>Rank:</strong> ${rec.rank}</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Scores</h6>
+                    <p><strong>Combined Score:</strong> ${rec.combined_score.toFixed(3)}</p>
+                    <p><strong>Rules Score:</strong> ${rec.rules_score.toFixed(3)}</p>
+                    <p><strong>ML Confidence:</strong> ${(rec.ml_confidence * 100).toFixed(1)}%</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Statistical Measures</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tr><td><strong>P-value (SS):</strong></td><td>${rec.statistical_measures.p_ss}</td></tr>
+                            <tr><td><strong>P-value (SOTH):</strong></td><td>${rec.statistical_measures.p_soth}</td></tr>
+                            <tr><td><strong>Effect Size (SS):</strong></td><td>${rec.statistical_measures.dz_ss_mean}</td></tr>
+                            <tr><td><strong>Effect Size (SOTH):</strong></td><td>${rec.statistical_measures.dz_soth_mean}</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('detailsContent').innerHTML = content;
+        new bootstrap.Modal(document.getElementById('detailsModal')).show();
+    }
+}
+
+function refreshResults() {
+    location.reload();
+}
+
+function exportCSV() {
+    // Implementation for CSV export
+    alert('CSV export functionality will be implemented');
+}
+
+function exportJSON() {
+    // Implementation for JSON export
+    alert('JSON export functionality will be implemented');
+}
+</script>
+{% endblock %}

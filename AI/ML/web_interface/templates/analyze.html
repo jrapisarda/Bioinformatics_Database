@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+
+{% block title %}Configure Analysis - Gene Pair ML Analysis{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- Page Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('upload_file') }}">Upload</a></li>
+                    <li class="breadcrumb-item active">Configure Analysis</li>
+                </ol>
+            </nav>
+            <h2>
+                <i class="fas fa-cogs icon-gradient me-2"></i>
+                Configure Analysis
+            </h2>
+            <p class="text-muted">Customize your gene pair analysis parameters and ranking rules.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Data Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-database me-2"></i>
+                        Data Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Total Gene Pairs:</strong> 
+                        <span class="badge bg-primary">{{ stats.total_pairs }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Data Source:</strong> 
+                        <span class="badge bg-secondary">{{ data_source|title }}</span>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Columns:</strong>
+                        <div class="mt-2">
+                            {% for col in stats.columns[:5] %}
+                                <span class="badge bg-light text-dark me-1 mb-1">{{ col }}</span>
+                            {% endfor %}
+                            {% if stats.columns|length > 5 %}
+                                <span class="badge bg-light text-dark me-1 mb-1">+{{ stats.columns|length - 5 }} more</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Data Preview -->
+                    <button class="btn btn-outline-primary btn-sm w-100" type="button" data-bs-toggle="collapse" data-bs-target="#dataPreview">
+                        <i class="fas fa-eye me-1"></i>Preview Data
+                    </button>
+                    
+                    <div class="collapse mt-3" id="dataPreview">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        {% for col in stats.columns[:4] %}
+                                            <th>{{ col }}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for row in stats.preview[:3] %}
+                                        <tr>
+                                            {% for col in stats.columns[:4] %}
+                                                <td class="small">{{ row[col] }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analysis Configuration -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-sliders-h me-2"></i>
+                        Analysis Parameters
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form id="analysisForm">
+                        <!-- ML Parameters -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Machine Learning Settings</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="n_features" class="form-label">Number of Features</label>
+                                    <input type="number" class="form-control" id="n_features" name="n_features" 
+                                           value="5" min="2" max="20">
+                                    <div class="form-text">Number of features for ensemble methods</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="contamination" class="form-label">Contamination Rate</label>
+                                    <input type="number" class="form-control" id="contamination" name="contamination" 
+                                           value="0.1" min="0.01" max="0.5" step="0.01">
+                                    <div class="form-text">Expected proportion of outliers</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Components -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Analysis Components</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="isolation_forest" checked>
+                                        <label class="form-check-label" for="isolation_forest">
+                                            Isolation Forest
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="dbscan" checked>
+                                        <label class="form-check-label" for="dbscan">
+                                            DBSCAN Clustering
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="pca" checked>
+                                        <label class="form-check-label" for="pca">
+                                            PCA Analysis
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="gaussian_mixture" checked>
+                                        <label class="form-check-label" for="gaussian_mixture">
+                                            Gaussian Mixture
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rules Configuration -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold">Ranking Rules</h6>
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Default rules will be applied. For custom rules, visit the 
+                                <a href="{{ url_for('rules_configuration') }}" class="alert-link">Rules Configuration</a> page.
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                <i class="fas fa-arrow-left me-1"></i>Back
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="startAnalysisBtn">
+                                <i class="fas fa-play me-1"></i>Start Analysis
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Progress -->
+    <div class="row mt-4" id="analysisProgress" style="display: none;">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-spinner fa-spin me-2"></i>
+                        Analysis in Progress
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span id="analysisStatus">Initializing analysis...</span>
+                            <span id="analysisPercent">0%</span>
+                        </div>
+                        <div class="progress mt-2">
+                            <div class="progress-bar" role="progressbar" id="analysisProgressBar" 
+                                 style="width: 0%"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="analysisLog" class="bg-light p-3 rounded" style="height: 200px; overflow-y: auto;">
+                        <div class="text-muted">Starting analysis...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Analysis form submission
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(this);
+    const params = {};
+    
+    // Add ML parameters
+    params.n_features = parseInt(formData.get('n_features'));
+    params.contamination = parseFloat(formData.get('contamination'));
+    
+    // Add component selections
+    params.components = {
+        isolation_forest: document.getElementById('isolation_forest').checked,
+        dbscan: document.getElementById('dbscan').checked,
+        pca: document.getElementById('pca').checked,
+        gaussian_mixture: document.getElementById('gaussian_mixture').checked
+    };
+    
+    // Show progress section
+    document.getElementById('analysisProgress').style.display = 'block';
+    document.getElementById('startAnalysisBtn').disabled = true;
+    document.getElementById('startAnalysisBtn').innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Running...';
+    
+    // Scroll to progress
+    document.getElementById('analysisProgress').scrollIntoView({ behavior: 'smooth' });
+    
+    // Start analysis
+    startAnalysis(params);
+});
+
+function startAnalysis(params) {
+    const sessionId = window.location.pathname.split('/').pop();
+    
+    // Simulate analysis progress (replace with real API call)
+    simulateAnalysisProgress();
+    
+    // Real implementation would be:
+    /*
+    fetch(`/api/analyze/${sessionId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'completed') {
+            window.location.href = `/results/${sessionId}`;
+        } else {
+            showError('Analysis failed: ' + data.error);
+        }
+    })
+    .catch(error => {
+        showError('Analysis error: ' + error.message);
+    });
+    */
+}
+
+function simulateAnalysisProgress() {
+    const steps = [
+        { percent: 10, status: 'Loading and validating data...', log: 'Data loaded successfully' },
+        { percent: 25, status: 'Applying data preprocessing...', log: 'Data preprocessing completed' },
+        { percent: 40, status: 'Running Isolation Forest...', log: 'Isolation Forest analysis completed' },
+        { percent: 55, status: 'Running DBSCAN clustering...', log: 'DBSCAN clustering completed' },
+        { percent: 70, status: 'Running PCA analysis...', log: 'PCA analysis completed' },
+        { percent: 85, status: 'Applying ranking rules...', log: 'Ranking rules applied' },
+        { percent: 95, status: 'Generating recommendations...', log: 'Recommendations generated' },
+        { percent: 100, status: 'Analysis completed!', log: 'Analysis completed successfully' }
+    ];
+    
+    let currentStep = 0;
+    
+    const interval = setInterval(() => {
+        if (currentStep < steps.length) {
+            const step = steps[currentStep];
+            
+            // Update progress
+            document.getElementById('analysisProgressBar').style.width = step.percent + '%';
+            document.getElementById('analysisPercent').textContent = step.percent + '%';
+            document.getElementById('analysisStatus').textContent = step.status;
+            
+            // Add to log
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${step.log}`;
+            document.getElementById('analysisLog').appendChild(logEntry);
+            
+            // Scroll log to bottom
+            const log = document.getElementById('analysisLog');
+            log.scrollTop = log.scrollHeight;
+            
+            currentStep++;
+        } else {
+            clearInterval(interval);
+            
+            // Redirect to results after completion
+            setTimeout(() => {
+                const sessionId = window.location.pathname.split('/').pop();
+                window.location.href = `/results/${sessionId}`;
+            }, 1000);
+        }
+    }, 1500);
+}
+
+function showError(message) {
+    document.getElementById('analysisStatus').textContent = 'Analysis failed';
+    document.getElementById('analysisLog').innerHTML = `<div class="text-danger">${message}</div>`;
+    
+    // Reset button
+    document.getElementById('startAnalysisBtn').disabled = false;
+    document.getElementById('startAnalysisBtn').innerHTML = '<i class="fas fa-play me-1"></i>Start Analysis';
+}
+
+// Check if analysis is already in progress
+function checkAnalysisStatus() {
+    const sessionId = window.location.pathname.split('/').pop();
+    
+    // Real implementation would check with server
+    /*
+    fetch(`/api/progress/${sessionId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.in_progress) {
+                document.getElementById('analysisProgress').style.display = 'block';
+                // Continue monitoring progress
+            }
+        });
+    */
+}
+
+// Check status on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkAnalysisStatus();
+});
+</script>
+{% endblock %}

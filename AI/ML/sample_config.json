@@ -1,0 +1,27 @@
+{
+  "analysis": {
+    "n_features": 5,
+    "contamination": 0.1,
+    "random_state": 42
+  },
+  "rules": [
+    {
+      "name": "High Significance",
+      "condition": "p_ss < 0.01 and p_soth < 0.001",
+      "weight": 0.4,
+      "description": "Very high statistical significance"
+    },
+    {
+      "name": "Large Negative Effect",
+      "condition": "dz_ss_mean < -0.5 and dz_soth_mean < -1.0",
+      "weight": 0.3,
+      "description": "Large negative effect sizes (common in sepsis)"
+    }
+  ],
+  "database": {
+    "server": "localhost",
+    "database": "BioinformaticsDB",
+    "username": "sa",
+    "password": "password"
+  }
+}

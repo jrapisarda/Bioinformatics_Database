@@ -1,0 +1,14 @@
+{
+  "db": {
+    "driver": "ODBC Driver 17 for SQL Server",
+    "server": "localhost",
+    "database": "db_genes",
+    "trusted_connection": true
+  },
+  "labels": { "control": 2, "septic shock": 1, "sepsis": 3 },
+  "random_seed": 42,
+  "thresholds": { "q_max": 0.05, "abs_dz_min": 0.40, "kappa_min": 0.7, "auroc_min": 0.75 },
+  "meta": { "random_effects": true, "egger_min_k": 10 },
+  "validation": { "loso_enable": false },
+  "permutation_fdr": { "enable": false, "permutations": 1000, "max_pairs": 5000 }
+}

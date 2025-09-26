@@ -1,0 +1,116 @@
+2025-09-25 18:08:57,974 - __main__ - INFO - Running file analysis on: .\pair_metrics_agent.csv
+2025-09-25 18:08:58,006 - gene_pair_agent.meta_analysis_processor - INFO - Loaded 6786 records from pair_metrics_agent.csv
+2025-09-25 18:08:58,028 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 18:08:58,048 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:08:58,068 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:08:58,070 - gene_pair_agent.meta_analysis_processor - INFO - Data prepared for analysis: (6786, 34)
+2025-09-25 18:08:58,071 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 18:08:58,071 - __main__ - INFO - Starting gene pair analysis...
+2025-09-25 18:08:58,071 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 6786 gene pairs
+2025-09-25 18:08:58,085 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:08:58,114 - gene_pair_agent.feature_engineering - INFO - Selected 41 features after cleaning
+2025-09-25 18:08:58,146 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 41 -> 5 components
+2025-09-25 18:09:00,371 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 18:09:00,371 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 6786 gene pairs
+2025-09-25 18:09:00,384 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:09:01,279 - __main__ - ERROR - Analysis failed: Negative values in data passed to X.
+2025-09-25 18:34:03,411 - __main__ - INFO - Running file analysis on: .\pair_metrics_agent.csv
+2025-09-25 18:34:03,460 - gene_pair_agent.meta_analysis_processor - INFO - Loaded 6786 records from pair_metrics_agent.csv
+2025-09-25 18:34:03,474 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 18:34:03,494 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:34:03,511 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:34:03,512 - gene_pair_agent.meta_analysis_processor - INFO - Data prepared for analysis: (6786, 34)
+2025-09-25 18:34:03,512 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 18:34:03,512 - __main__ - INFO - Starting gene pair analysis...
+2025-09-25 18:34:03,513 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 6786 gene pairs
+2025-09-25 18:34:03,520 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:34:03,560 - gene_pair_agent.feature_engineering - INFO - Selected 41 features after cleaning
+2025-09-25 18:34:03,586 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 41 -> 5 components
+2025-09-25 18:34:05,442 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 18:34:05,443 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 6786 gene pairs
+2025-09-25 18:34:05,448 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:34:06,333 - __main__ - ERROR - Analysis failed: Negative values in data passed to X.
+2025-09-25 18:36:05,477 - __main__ - INFO - Running file analysis on: .\pair_metrics_agent.csv
+2025-09-25 18:36:05,514 - gene_pair_agent.meta_analysis_processor - INFO - Loaded 6786 records from pair_metrics_agent.csv
+2025-09-25 18:36:05,514 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 18:36:05,532 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:36:05,557 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 18:36:05,557 - gene_pair_agent.meta_analysis_processor - INFO - Data prepared for analysis: (6786, 34)
+2025-09-25 18:36:05,557 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 18:36:05,557 - __main__ - INFO - Starting gene pair analysis...
+2025-09-25 18:36:05,557 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 6786 gene pairs
+2025-09-25 18:36:05,564 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:36:05,598 - gene_pair_agent.feature_engineering - INFO - Selected 41 features after cleaning
+2025-09-25 18:36:05,627 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 41 -> 5 components
+2025-09-25 18:36:07,490 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 18:36:07,490 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 6786 gene pairs
+2025-09-25 18:36:07,506 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 18:36:08,256 - __main__ - ERROR - Analysis failed: Negative values in data passed to X.
+2025-09-25 19:32:03,241 - __main__ - INFO - Running file analysis on: .\pair_metrics_agent.csv
+2025-09-25 19:32:03,298 - gene_pair_agent.meta_analysis_processor - INFO - Loaded 6786 records from pair_metrics_agent.csv
+2025-09-25 19:32:03,306 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 19:32:03,326 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 19:32:03,352 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (6786, 32)
+2025-09-25 19:32:03,352 - gene_pair_agent.meta_analysis_processor - INFO - Data prepared for analysis: (6786, 34)
+2025-09-25 19:32:03,352 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:32:03,352 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:32:03,352 - gene_pair_agent.gene_pair_analyzer - INFO - Initialized GenePairAnalyzer with n_features=5, contamination=0.1
+2025-09-25 19:32:03,352 - gene_pair_agent.rules_engine - INFO - Added rule: High Significance
+2025-09-25 19:32:03,352 - gene_pair_agent.rules_engine - INFO - Added rule: Large Negative Effect
+2025-09-25 19:32:03,352 - __main__ - INFO - Starting gene pair analysis...
+2025-09-25 19:32:03,352 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 6786 gene pairs
+2025-09-25 19:32:03,352 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (6786, 34)
+2025-09-25 19:32:03,352 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:32:03,413 - gene_pair_agent.feature_engineering - INFO - Created 87 derived features
+2025-09-25 19:32:03,413 - gene_pair_agent.feature_engineering - INFO - Derived features created: (6786, 121)
+2025-09-25 19:32:03,413 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:32:03,499 - gene_pair_agent.feature_engineering - INFO - Removed 22 low-variance features
+2025-09-25 19:32:03,499 - gene_pair_agent.feature_engineering - INFO - Selected 78 features after cleaning
+2025-09-25 19:32:03,500 - gene_pair_agent.feature_engineering - INFO - Features selected: (6786, 78)
+2025-09-25 19:32:03,504 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -1078.493, Max: 14612.520
+2025-09-25 19:32:03,513 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 4.568, Std: 13.629
+2025-09-25 19:32:03,540 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (6786, 78)
+2025-09-25 19:32:03,553 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -713.890, Max: 1887.418
+2025-09-25 19:32:03,614 - gene_pair_agent.feature_engineering - INFO - PCA completed: (6786, 5)
+2025-09-25 19:32:03,614 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.60244666 0.33439561 0.02572681 0.02338712 0.00426903]
+2025-09-25 19:32:03,614 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 78 -> 5 components
+2025-09-25 19:32:03,614 - gene_pair_agent.gene_pair_analyzer - INFO - Feature engineering completed: (6786, 5)
+2025-09-25 19:32:03,614 - gene_pair_agent.gene_pair_analyzer - INFO - Feature scaling completed: (6786, 5)
+2025-09-25 19:32:03,614 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting Isolation Forest...
+2025-09-25 19:32:03,739 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:32:03,739 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 6786 gene pairs
+2025-09-25 19:32:03,739 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (6786, 34)
+2025-09-25 19:32:03,739 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:32:03,803 - gene_pair_agent.feature_engineering - INFO - Created 87 derived features
+2025-09-25 19:32:03,828 - gene_pair_agent.gene_pair_analyzer - INFO - Features transformed: (6786, 5)
+2025-09-25 19:32:03,829 - gene_pair_agent.gene_pair_analyzer - INFO - Features scaled: (6786, 5)
+2025-09-25 19:32:03,829 - gene_pair_agent.gene_pair_analyzer - INFO - Running ensemble analysis...
+2025-09-25 19:32:03,829 - gene_pair_agent.gene_pair_analyzer - INFO - Running Isolation Forest...
+2025-09-25 19:32:03,893 - gene_pair_agent.gene_pair_analyzer - INFO - Anomaly detection completed: 679 outliers detected
+2025-09-25 19:32:03,894 - gene_pair_agent.gene_pair_analyzer - INFO - Preparing non-negative features for algorithms that require them...
+2025-09-25 19:32:03,894 - gene_pair_agent.gene_pair_analyzer - INFO - Running DBSCAN clustering...
+2025-09-25 19:32:05,789 - gene_pair_agent.gene_pair_analyzer - INFO - DBSCAN completed: 1 clusters, 0 noise points
+2025-09-25 19:32:05,790 - gene_pair_agent.gene_pair_analyzer - INFO - Running Gaussian Mixture Model...
+2025-09-25 19:32:07,371 - gene_pair_agent.gene_pair_analyzer - INFO - GMM completed: 3 components
+2025-09-25 19:32:07,371 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating clustering quality metrics...
+2025-09-25 19:32:07,373 - gene_pair_agent.gene_pair_analyzer - INFO - Quality metrics - Silhouette: -1.000, Calinski-Harabasz: -1.0
+2025-09-25 19:32:07,373 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating ensemble consensus...
+2025-09-25 19:33:16,462 - gene_pair_agent.rules_engine - INFO - Positive control ('MS4A4A', 'CD86') ranks at 99.6% percentile
+2025-09-25 19:33:16,466 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis completed successfully
+2025-09-25 19:33:16,471 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis results saved to results.json
+2025-09-25 19:33:16,471 - __main__ - INFO - Analysis completed successfully!
+2025-09-25 19:33:16,471 - __main__ - INFO - Total recommendations: 20
+2025-09-25 19:33:16,473 - __main__ - INFO - Positive control validation: True
+2025-09-25 19:33:16,473 - __main__ - INFO - 
+Top 10 Recommendations:
+2025-09-25 19:33:16,473 - __main__ - INFO -  1. DHRS9-SULF2 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  2. MBTD1-CD86 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  3. CXCR5-ZDHHC19 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  4. NPL-S100P (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  5. SLCO4A1-SLC39A8 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  6. PSMF1-CYP19A1 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  7. GSR-CHEK1 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  8. UNK-CYP19A1 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO -  9. MBTD1-CCL4 (Score: 0.350)
+2025-09-25 19:33:16,473 - __main__ - INFO - 10. DHRS9-ARHGEF10L (Score: 0.290)
+2025-09-25 19:33:17,128 - __main__ - INFO - Process completed successfully!

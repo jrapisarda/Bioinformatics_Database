@@ -1,0 +1,727 @@
+{
+  "analysis_summary": {
+    "status": "completed",
+    "summary_stats": {
+      "total_pairs": 6786,
+      "outliers_detected": "679",
+      "clusters_found": 1,
+      "silhouette_score": -1,
+      "positive_control_validated": true,
+      "significant_pairs_ss": "479",
+      "significant_pairs_soth": "933",
+      "large_effect_pairs": "1"
+    },
+    "recommendations_count": 20,
+    "top_recommendations": [
+      {
+        "gene_a": "DHRS9",
+        "gene_b": "SULF2",
+        "rules_score": 0.24285714285714285,
+        "ml_confidence": 0.6,
+        "combined_score": 0.35,
+        "is_high_confidence": false,
+        "is_outlier": true,
+        "rank": 1,
+        "statistical_measures": {
+          "p_ss": 0.001066414164603,
+          "p_soth": 2.2080100192667373e-08,
+          "dz_ss_mean": -0.6553528878546621,
+          "dz_soth_mean": -1.0319400934544876,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "MBTD1",
+        "gene_b": "CD86",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 2,
+        "statistical_measures": {
+          "p_ss": 0.0011320000117343,
+          "p_soth": 2.5285003135699924e-07,
+          "dz_ss_mean": 0.6519663041060619,
+          "dz_soth_mean": 0.6247371474487505,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "CXCR5",
+        "gene_b": "ZDHHC19",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 3,
+        "statistical_measures": {
+          "p_ss": 0.0019086008429851,
+          "p_soth": 1.0328241873747146e-05,
+          "dz_ss_mean": -0.6216490237009601,
+          "dz_soth_mean": -0.6067876462925762,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "NPL",
+        "gene_b": "S100P",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 4,
+        "statistical_measures": {
+          "p_ss": 0.0013451027798621,
+          "p_soth": 2.1900945728070558e-06,
+          "dz_ss_mean": -0.6420924985657351,
+          "dz_soth_mean": -0.57377793746692,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "SLCO4A1",
+        "gene_b": "SLC39A8",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 5,
+        "statistical_measures": {
+          "p_ss": 0.0041021284498523,
+          "p_soth": 1.707502793601989e-06,
+          "dz_ss_mean": 0.5748068284562377,
+          "dz_soth_mean": 0.5798654283505044,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "PSMF1",
+        "gene_b": "CYP19A1",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 6,
+        "statistical_measures": {
+          "p_ss": 0.0097151845545899,
+          "p_soth": 1.238137313563925e-06,
+          "dz_ss_mean": -0.5178519520619942,
+          "dz_soth_mean": -0.5876396802829781,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "GSR",
+        "gene_b": "CHEK1",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 7,
+        "statistical_measures": {
+          "p_ss": 0.000781391338988,
+          "p_soth": 9.448312794280156e-05,
+          "dz_ss_mean": 0.6727583563445195,
+          "dz_soth_mean": 0.4731158998119766,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "UNK",
+        "gene_b": "CYP19A1",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 8,
+        "statistical_measures": {
+          "p_ss": 0.009453250003778,
+          "p_soth": 3.308691575720779e-05,
+          "dz_ss_mean": 0.5197359095219728,
+          "dz_soth_mean": 0.53759384109122,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "MBTD1",
+        "gene_b": "CCL4",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.8,
+        "combined_score": 0.35,
+        "is_high_confidence": true,
+        "is_outlier": false,
+        "rank": 9,
+        "statistical_measures": {
+          "p_ss": 0.0024148764754907,
+          "p_soth": 0.0001072461949147,
+          "dz_ss_mean": -0.6075723418463964,
+          "dz_soth_mean": -0.4693891216542712,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.4377581101807664e-06
+        }
+      },
+      {
+        "gene_a": "DHRS9",
+        "gene_b": "ARHGEF10L",
+        "rules_score": 0.15714285714285717,
+        "ml_confidence": 0.6,
+        "combined_score": 0.29000000000000004,
+        "is_high_confidence": false,
+        "is_outlier": true,
+        "rank": 10,
+        "statistical_measures": {
+          "p_ss": 0.0033957008186054,
+          "p_soth": 5.420199844508032e-10,
+          "dz_ss_mean": -0.586671351426058,
+          "dz_soth_mean": -0.7520761125877088,
+          "q_ss": 0.1512665304983378,
+          "q_soth": 3.678147614483152e-06
+        }
+      }
+    ],
+    "clustering_quality": {
+      "silhouette_score": -1,
+      "calinski_harabasz_score": -1,
+      "n_clusters_found": 1
+    },
+    "feature_engineering_summary": {
+      "status": "fitted",
+      "n_original_features": 78,
+      "n_components": 5,
+      "explained_variance_ratio": [
+        0.602446661058937,
+        0.3343956085051271,
+        0.0257268066331061,
+        0.023387118876950427,
+        0.004269026634466032
+      ],
+      "total_explained_variance": 0.9902252217085867,
+      "feature_names": [
+        "dz_ss_mean",
+        "dz_ss_ci_low",
+        "dz_ss_ci_high",
+        "dz_ss_z",
+        "p_ss",
+        "dz_soth_mean",
+        "dz_soth_se",
+        "dz_soth_ci_low",
+        "dz_soth_ci_high",
+        "dz_soth_Q",
+        "dz_soth_I2",
+        "dz_soth_z",
+        "p_soth",
+        "kappa_soth",
+        "abs_dz_ss",
+        "abs_dz_soth",
+        "rank_score",
+        "GeneAKey",
+        "GeneBKey",
+        "effect_size_composite",
+        "significance_composite",
+        "effect_size_ratio",
+        "effect_size_diff",
+        "effect_size_sum",
+        "effect_size_product",
+        "log_p_ss",
+        "log_p_soth",
+        "p_composite",
+        "p_harmonic_mean",
+        "ci_ss_center",
+        "ci_ss_relative_width",
+        "ci_soth_width",
+        "ci_soth_center",
+        "ci_soth_relative_width",
+        "i2_max",
+        "i2_mean",
+        "z_composite",
+        "z_ratio",
+        "z_sum",
+        "z_product",
+        "dz_ss_mean_abs",
+        "dz_ss_ci_low_abs",
+        "dz_ss_ci_high_abs",
+        "dz_ss_z_abs",
+        "p_ss_abs",
+        "dz_soth_mean_abs",
+        "dz_soth_se_abs",
+        "dz_soth_ci_low_abs",
+        "dz_soth_ci_high_abs",
+        "dz_soth_Q_abs",
+        "dz_soth_I2_abs",
+        "dz_soth_z_abs",
+        "p_soth_abs",
+        "kappa_soth_abs",
+        "abs_dz_ss_abs",
+        "abs_dz_soth_abs",
+        "rank_score_abs",
+        "effect_size_composite_abs",
+        "significance_composite_abs",
+        "effect_size_ratio_abs",
+        "effect_size_diff_abs",
+        "effect_size_sum_abs",
+        "effect_size_product_abs",
+        "log_p_ss_abs",
+        "log_p_soth_abs",
+        "p_composite_abs",
+        "p_harmonic_mean_abs",
+        "ci_ss_center_abs",
+        "ci_ss_relative_width_abs",
+        "ci_soth_width_abs",
+        "ci_soth_center_abs",
+        "ci_soth_relative_width_abs",
+        "i2_max_abs",
+        "i2_mean_abs",
+        "z_composite_abs",
+        "z_ratio_abs",
+        "z_sum_abs",
+        "z_product_abs"
+      ]
+    }
+  },
+  "recommendations": [
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "SULF2",
+      "rules_score": 0.24285714285714285,
+      "ml_confidence": 0.6,
+      "combined_score": 0.35,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 1,
+      "statistical_measures": {
+        "p_ss": 0.001066414164603,
+        "p_soth": 2.2080100192667373e-08,
+        "dz_ss_mean": -0.6553528878546621,
+        "dz_soth_mean": -1.0319400934544876,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "MBTD1",
+      "gene_b": "CD86",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 2,
+      "statistical_measures": {
+        "p_ss": 0.0011320000117343,
+        "p_soth": 2.5285003135699924e-07,
+        "dz_ss_mean": 0.6519663041060619,
+        "dz_soth_mean": 0.6247371474487505,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "CXCR5",
+      "gene_b": "ZDHHC19",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 3,
+      "statistical_measures": {
+        "p_ss": 0.0019086008429851,
+        "p_soth": 1.0328241873747146e-05,
+        "dz_ss_mean": -0.6216490237009601,
+        "dz_soth_mean": -0.6067876462925762,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "NPL",
+      "gene_b": "S100P",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 4,
+      "statistical_measures": {
+        "p_ss": 0.0013451027798621,
+        "p_soth": 2.1900945728070558e-06,
+        "dz_ss_mean": -0.6420924985657351,
+        "dz_soth_mean": -0.57377793746692,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "SLCO4A1",
+      "gene_b": "SLC39A8",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 5,
+      "statistical_measures": {
+        "p_ss": 0.0041021284498523,
+        "p_soth": 1.707502793601989e-06,
+        "dz_ss_mean": 0.5748068284562377,
+        "dz_soth_mean": 0.5798654283505044,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "PSMF1",
+      "gene_b": "CYP19A1",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 6,
+      "statistical_measures": {
+        "p_ss": 0.0097151845545899,
+        "p_soth": 1.238137313563925e-06,
+        "dz_ss_mean": -0.5178519520619942,
+        "dz_soth_mean": -0.5876396802829781,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "GSR",
+      "gene_b": "CHEK1",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 7,
+      "statistical_measures": {
+        "p_ss": 0.000781391338988,
+        "p_soth": 9.448312794280156e-05,
+        "dz_ss_mean": 0.6727583563445195,
+        "dz_soth_mean": 0.4731158998119766,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "UNK",
+      "gene_b": "CYP19A1",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 8,
+      "statistical_measures": {
+        "p_ss": 0.009453250003778,
+        "p_soth": 3.308691575720779e-05,
+        "dz_ss_mean": 0.5197359095219728,
+        "dz_soth_mean": 0.53759384109122,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "MBTD1",
+      "gene_b": "CCL4",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.8,
+      "combined_score": 0.35,
+      "is_high_confidence": true,
+      "is_outlier": false,
+      "rank": 9,
+      "statistical_measures": {
+        "p_ss": 0.0024148764754907,
+        "p_soth": 0.0001072461949147,
+        "dz_ss_mean": -0.6075723418463964,
+        "dz_soth_mean": -0.4693891216542712,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "ARHGEF10L",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 10,
+      "statistical_measures": {
+        "p_ss": 0.0033957008186054,
+        "p_soth": 5.420199844508032e-10,
+        "dz_ss_mean": -0.586671351426058,
+        "dz_soth_mean": -0.7520761125877088,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.678147614483152e-06
+      }
+    },
+    {
+      "gene_a": "ADA2",
+      "gene_b": "LDLR",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 11,
+      "statistical_measures": {
+        "p_ss": 0.0084379881344778,
+        "p_soth": 1.5197869629446359e-09,
+        "dz_ss_mean": -0.5275083258602582,
+        "dz_soth_mean": -0.7321815044697231,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "FGD2",
+      "gene_b": "DDAH2",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 12,
+      "statistical_measures": {
+        "p_ss": 0.0065822890831341,
+        "p_soth": 7.016915337665354e-08,
+        "dz_ss_mean": -0.5441800535852491,
+        "dz_soth_mean": -0.6883950260289857,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "NPL",
+      "gene_b": "RAB20",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 13,
+      "statistical_measures": {
+        "p_ss": 0.0098780798467075,
+        "p_soth": 7.847363203694613e-09,
+        "dz_ss_mean": -0.5167030416540832,
+        "dz_soth_mean": -0.6993975000737873,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "CYP19A1",
+      "gene_b": "MERTK",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 14,
+      "statistical_measures": {
+        "p_ss": 0.007654077517825,
+        "p_soth": 2.4535709908235503e-08,
+        "dz_ss_mean": 0.5341046200373808,
+        "dz_soth_mean": 0.675747407650255,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "UNK",
+      "gene_b": "LBH",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 15,
+      "statistical_measures": {
+        "p_ss": 0.0062879593034892,
+        "p_soth": 4.5350922794895616e-08,
+        "dz_ss_mean": -0.5472050241664843,
+        "dz_soth_mean": -0.6626727147600362,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "DHRS9",
+      "gene_b": "MERTK",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 16,
+      "statistical_measures": {
+        "p_ss": 0.0043978444091643,
+        "p_soth": 5.001871834497962e-07,
+        "dz_ss_mean": 0.5703848680374742,
+        "dz_soth_mean": 0.6090645122264169,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "CXCR5",
+      "gene_b": "DDAH2",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 17,
+      "statistical_measures": {
+        "p_ss": 0.0009280856159035,
+        "p_soth": 9.99324228523335e-06,
+        "dz_ss_mean": -0.6631780008073492,
+        "dz_soth_mean": -0.5352772748022173,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "SLC39A8",
+      "gene_b": "ZNF823",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 18,
+      "statistical_measures": {
+        "p_ss": 0.0071261293395976,
+        "p_soth": 3.3900888279037034e-05,
+        "dz_ss_mean": -0.5388973783817324,
+        "dz_soth_mean": -0.5981133636041502,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "CD82",
+      "gene_b": "CXCR5",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 19,
+      "statistical_measures": {
+        "p_ss": 0.007912629096233,
+        "p_soth": 1.2812166345632647e-06,
+        "dz_ss_mean": -0.5318647096768144,
+        "dz_soth_mean": -0.5868169853091624,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    },
+    {
+      "gene_a": "ACOT13",
+      "gene_b": "TMX4",
+      "rules_score": 0.15714285714285717,
+      "ml_confidence": 0.6,
+      "combined_score": 0.29000000000000004,
+      "is_high_confidence": false,
+      "is_outlier": true,
+      "rank": 20,
+      "statistical_measures": {
+        "p_ss": 0.0041670871230734,
+        "p_soth": 1.994280406525384e-05,
+        "dz_ss_mean": 0.573811249999854,
+        "dz_soth_mean": 0.537399465807724,
+        "q_ss": 0.1512665304983378,
+        "q_soth": 3.4377581101807664e-06
+      }
+    }
+  ],
+  "summary_stats": {
+    "total_pairs": 6786,
+    "outliers_detected": "679",
+    "clusters_found": 1,
+    "silhouette_score": -1,
+    "positive_control_validated": true,
+    "significant_pairs_ss": "479",
+    "significant_pairs_soth": "933",
+    "large_effect_pairs": "1"
+  },
+  "rules_engine_config": {
+    "total_rules": 7,
+    "enabled_rules": 7,
+    "positive_control": [
+      "MS4A4A",
+      "CD86"
+    ],
+    "rules": [
+      {
+        "name": "Statistical Significance",
+        "condition": "(p_ss < 0.1) and (p_soth < 0.01)",
+        "weight": 0.25,
+        "enabled": true,
+        "description": "Strong statistical significance in both conditions"
+      },
+      {
+        "name": "Effect Size Strength",
+        "condition": "(abs_dz_ss > 0.3) and (abs_dz_soth > 1.0)",
+        "weight": 0.3,
+        "enabled": true,
+        "description": "Substantial effect sizes indicating biological relevance"
+      },
+      {
+        "name": "Z-Score Strength",
+        "condition": "(abs(dz_ss_z) > 1.5) and (abs(dz_soth_z) > 3.0)",
+        "weight": 0.2,
+        "enabled": true,
+        "description": "Strong standardized effect sizes"
+      },
+      {
+        "name": "FDR Correction",
+        "condition": "(q_ss < 0.2) and (q_soth < 0.01)",
+        "weight": 0.15,
+        "enabled": true,
+        "description": "False discovery rate controlled results"
+      },
+      {
+        "name": "Consistency",
+        "condition": "(dz_ss_I2 < 50) or (dz_soth_I2 < 75)",
+        "weight": 0.1,
+        "enabled": true,
+        "description": "Low heterogeneity indicating consistent effects"
+      },
+      {
+        "name": "High Significance",
+        "condition": "p_ss < 0.01 and p_soth < 0.001",
+        "weight": 0.4,
+        "enabled": true,
+        "description": "Very high statistical significance"
+      },
+      {
+        "name": "Large Negative Effect",
+        "condition": "dz_ss_mean < -0.5 and dz_soth_mean < -1.0",
+        "weight": 0.3,
+        "enabled": true,
+        "description": "Large negative effect sizes (common in sepsis)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,31 @@
+Friendly Name,Column Name,Calculation / Description
+Pair Identifier,pair_id,"A unique identifier for the gene pair (e.g., 11_110 represents genes with keys 11 and 110)."
+Gene A Name,GeneAName,"The common name of the first gene in the pair (DHRS9, MS4A4A)."
+Gene B Name,GeneBName,"The common name of the second gene in the pair (SULF2, CD86)."
+Gene A Key,GeneAKey,The internal database key for Gene A.
+Gene B Key,GeneBKey,The internal database key for Gene B.
+Sample Size - Number of Studies (Sepsis),n_studies_ss,The number of independent studies included in the meta-analysis for the Sepsis (SS) group.
+Sample Size - Number of Studies (Septic Shock),n_studies_soth,The number of independent studies included in the meta-analysis for the Septic Shock (SOTH) group.
+Effect Size Mean (Cohen's d/z) - SS,dz_ss_mean,The pooled estimate of the effect size (likely a standardized mean difference like Cohen's d or a Fisher's z-transformed correlation) across all Sepsis studies. A negative value suggests an inverse relationship.
+Standard Error of Effect Size - SS,dz_ss_se,The standard error of the pooled effect size estimate for the Sepsis group. Measures the precision of the mean estimate.
+95% CI Lower Bound - SS,dz_ss_ci_low,The lower bound of the 95% confidence interval for the pooled effect size in Sepsis.
+95% CI Upper Bound - SS,dz_ss_ci_high,The upper bound of the 95% confidence interval for the pooled effect size in Sepsis.
+Cochran's Q Statistic - SS,dz_ss_Q,A measure of heterogeneity (between-study variance). A significant Q (p < 0.05) suggests the effect sizes vary across studies more than expected by chance alone.
+I-squared Statistic (%) - SS,dz_ss_I2,A more intuitive measure of heterogeneity. It quantifies the percentage of total variation across studies that is due to heterogeneity rather than chance. (0-40%: low; 30-60%: moderate; 50-90%: substantial; 75-100%: considerable).
+Z-score - SS,dz_ss_z,The test statistic (Mean / SE) used to determine if the pooled effect size is statistically different from zero.
+P-value - SS,p_ss,"The statistical significance of the pooled effect size in Sepsis. A small p-value (e.g., < 0.05) indicates a significant effect."
+Effect Size Mean (SOTH),dz_soth_mean,The pooled effect size estimate for the Septic Shock group.
+Standard Error of Effect Size (SOTH),dz_soth_se,The standard error of the pooled effect size for Septic Shock.
+95% CI Lower Bound (SOTH),dz_soth_ci_low,The lower bound of the 95% CI for Septic Shock.
+95% CI Upper Bound (SOTH),dz_soth_ci_high,The upper bound of the 95% CI for Septic Shock.
+Cochran's Q Statistic (SOTH),dz_soth_Q,Measure of heterogeneity for the Septic Shock group.
+I-squared Statistic (%) (SOTH),dz_soth_I2,"Percentage of heterogeneity for the Septic Shock group. The values here (54.7%, 87.2%) indicate moderate to substantial heterogeneity."
+Z-score (SOTH),dz_soth_z,Test statistic for the Septic Shock effect size.
+P-value (SOTH),p_soth,Statistical significance for the Septic Shock effect size.
+Kappa (Agreement) - SS,kappa_ss,A measure of inter-study agreement or consistency in the direction of the effect. A value of 1 indicates perfect agreement across all studies in the Sepsis group.
+Kappa (Agreement) - SOTH,kappa_soth,Inter-study agreement measure for the Septic Shock group.
+Absolute Effect Size - SS,abs_dz_ss,"The absolute value of the effect size mean. Used for ranking the magnitude of the effect, regardless of direction."
+Absolute Effect Size - SOTH,abs_dz_soth,The absolute value of the effect size mean for Septic Shock.
+Q-value (FDR-adjusted P) - SS,q_ss,The False Discovery Rate (FDR)-adjusted p-value for the Sepsis group. This corrects for multiple hypothesis testing across thousands of gene pairs. A lower q-value indicates higher confidence after correction.
+Q-value (FDR-adjusted P) - SOTH,q_soth,The FDR-adjusted p-value for the Septic Shock group.
+Composite Rank Score,rank_score,"A composite metric you have devised that likely combines the magnitude of the effect (abs_dz), its significance (p_value or q_value), and potentially other factors like heterogeneity. A higher score indicates a higher-ranked, more biologically interesting pair."

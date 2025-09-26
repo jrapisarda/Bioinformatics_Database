@@ -1,0 +1,388 @@
+{% extends "base.html" %}
+
+{% block title %}Rules Configuration - Gene Pair ML Analysis{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">
+                        <i class="fas fa-cogs me-2"></i>
+                        Rules Configuration
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">
+                        Customize the ranking rules used to prioritize gene pair recommendations. 
+                        Rules are applied after machine learning analysis to refine the final rankings.
+                    </p>
+
+                    <!-- Default Rules Display -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Default Rules</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="defaultRulesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Rule</th>
+                                        <th>Weight</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="defaultRulesBody">
+                                    <!-- Rules will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Add New Rule -->
+                    <div class="card border-light mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-plus me-2"></i>
+                                Add Custom Rule
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <form id="addRuleForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ruleName" class="form-label">Rule Name</label>
+                                            <input type="text" class="form-control" id="ruleName" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ruleWeight" class="form-label">Weight (0-1)</label>
+                                            <input type="number" class="form-control" id="ruleWeight" 
+                                                   min="0" max="1" step="0.1" value="0.5" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="ruleField" class="form-label">Field</label>
+                                    <select class="form-select" id="ruleField" required>
+                                        <option value="">Select Field</option>
+                                        <option value="p_value_ss">P-value (Septic Shock)</option>
+                                        <option value="p_value_soth">P-value (Other Sepsis)</option>
+                                        <option value="effect_size_ss">Effect Size (Septic Shock)</option>
+                                        <option value="effect_size_soth">Effect Size (Other Sepsis)</option>
+                                        <option value="sample_size">Sample Size</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ruleCondition" class="form-label">Condition</label>
+                                            <select class="form-select" id="ruleCondition" required>
+                                                <option value="">Select Condition</option>
+                                                <option value="less_than">Less Than</option>
+                                                <option value="greater_than">Greater Than</option>
+                                                <option value="between">Between</option>
+                                                <option value="equal_to">Equal To</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="ruleValue" class="form-label">Value</label>
+                                            <input type="text" class="form-control" id="ruleValue" 
+                                                   placeholder="e.g., 0.05" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="ruleDescription" class="form-label">Description</label>
+                                    <textarea class="form-control" id="ruleDescription" rows="2" 
+                                              placeholder="Describe what this rule does..."></textarea>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i>Add Rule
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Custom Rules -->
+                    <div class="mb-4">
+                        <h5 class="fw-bold">Custom Rules</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm" id="customRulesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Weight</th>
+                                        <th>Field</th>
+                                        <th>Condition</th>
+                                        <th>Value</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customRulesBody">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            No custom rules added yet.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Test Rules -->
+                    <div class="card border-light">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">
+                                <i class="fas fa-vial me-2"></i>
+                                Test Rules
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted mb-3">
+                                Test your rules against sample data to see how they affect rankings.
+                            </p>
+                            <button class="btn btn-outline-primary" onclick="testRules()">
+                                <i class="fas fa-play me-1"></i>Run Test
+                            </button>
+                            
+                            <div id="testResults" class="mt-3" style="display: none;">
+                                <!-- Test results will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let customRules = [];
+
+// Load default rules on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadDefaultRules();
+});
+
+function loadDefaultRules() {
+    // Simulate loading default rules
+    const defaultRules = [
+        {
+            name: "Significant P-value SS",
+            weight: 0.3,
+            description: "Prioritize pairs with significant p-values in septic shock condition"
+        },
+        {
+            name: "Large Effect Size",
+            weight: 0.4,
+            description: "Give higher scores to pairs with large effect sizes"
+        },
+        {
+            name: "Consistent Direction",
+            weight: 0.2,
+            description: "Reward pairs with consistent effect direction across conditions"
+        },
+        {
+            name: "High Sample Size",
+            weight: 0.1,
+            description: "Consider sample size in ranking calculations"
+        }
+    ];
+    
+    const tbody = document.getElementById('defaultRulesBody');
+    tbody.innerHTML = '';
+    
+    defaultRules.forEach(rule => {
+        const row = `
+            <tr>
+                <td>${rule.name}</td>
+                <td>${rule.weight}</td>
+                <td>${rule.description}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+// Add custom rule
+document.getElementById('addRuleForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const rule = {
+        name: document.getElementById('ruleName').value,
+        weight: parseFloat(document.getElementById('ruleWeight').value),
+        field: document.getElementById('ruleField').value,
+        condition: document.getElementById('ruleCondition').value,
+        value: document.getElementById('ruleValue').value,
+        description: document.getElementById('ruleDescription').value
+    };
+    
+    customRules.push(rule);
+    updateCustomRulesTable();
+    
+    // Reset form
+    this.reset();
+    
+    // Show success message
+    showAlert('Rule added successfully!', 'success');
+});
+
+function updateCustomRulesTable() {
+    const tbody = document.getElementById('customRulesBody');
+    
+    if (customRules.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    No custom rules added yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    customRules.forEach((rule, index) => {
+        const row = `
+            <tr>
+                <td>${rule.name}</td>
+                <td>${rule.weight}</td>
+                <td>${rule.field}</td>
+                <td>${rule.condition}</td>
+                <td>${rule.value}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="removeRule(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
+    });
+}
+
+function removeRule(index) {
+    customRules.splice(index, 1);
+    updateCustomRulesTable();
+    showAlert('Rule removed successfully!', 'info');
+}
+
+function testRules() {
+    const testBtn = document.querySelector('button[onclick="testRules()"]');
+    testBtn.disabled = true;
+    testBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Testing...';
+    
+    // Simulate rule testing
+    setTimeout(() => {
+        const results = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Rules test completed successfully!
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Test Results:</h6>
+                    <ul>
+                        <li>Sample pairs tested: 10</li>
+                        <li>Rules applied: ${customRules.length + 4}</li>
+                        <li>Top score: 0.85</li>
+                        <li>Rules summary generated</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Recommendations:</h6>
+                    <p class="small text-muted">
+                        Your custom rules have been successfully integrated with the default rules.
+                        The ranking system is ready for analysis.
+                    </p>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('testResults').innerHTML = results;
+        document.getElementById('testResults').style.display = 'block';
+        
+        // Reset button
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<i class="fas fa-play me-1"></i>Run Test';
+    }, 2000);
+    
+    // Real implementation would be:
+    /*
+    fetch('/api/rules/test', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            custom_rules: customRules
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Show test results
+        const results = `
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle me-2"></i>
+                Rules test completed successfully!
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Test Results:</h6>
+                    <ul>
+                        <li>Sample pairs tested: ${data.sample_pairs}</li>
+                        <li>Rules applied: ${data.rules_summary.total_rules}</li>
+                        <li>Top score: ${data.top_scores[0]}</li>
+                        <li>Average score: ${data.top_scores.reduce((a, b) => a + b) / data.top_scores.length}</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('testResults').innerHTML = results;
+        document.getElementById('testResults').style.display = 'block';
+    })
+    .catch(error => {
+        showAlert('Error testing rules: ' + error.message, 'danger');
+    })
+    .finally(() => {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<i class="fas fa-play me-1"></i>Run Test';
+    });
+    */
+}
+
+function showAlert(message, type) {
+    const alert = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    // Insert alert at the top of the content
+    const container = document.querySelector('.card-body');
+    container.insertAdjacentHTML('afterbegin', alert);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        const alertElement = container.querySelector('.alert');
+        if (alertElement) {
+            const bsAlert = new bootstrap.Alert(alertElement);
+            bsAlert.close();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %}

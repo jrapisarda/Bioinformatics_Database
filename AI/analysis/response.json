@@ -1,0 +1,35 @@
+{
+  "verdict": "Moderate",
+  "rationale": [
+    "Strong effect in Shock vs Sepsis (dz = -0.655) with a significant p (0.0011) and CI excluding zero, and perfect consistency metric (kappa = 1.0).",
+    "Primary evidence is from a single SS study (n_studies_ss = 1) and q_ss (0.151) does not pass the typical multiple-testing threshold, so replication is lacking.",
+    "Supportive Shock vs Others evidence shows an even larger effect (dz = -1.032, p \u226a 0.001) but is based on only 3 studies and has moderate heterogeneity (I\u00b2 \u2248 54.7%)."
+  ],
+  "red_flags": [
+    "n_studies_ss = 1 (insufficient replication for a robust biomarker claim)",
+    "q_ss = 0.151 > 0.05 (not robust to multiple-testing correction in SS)",
+    "n_studies_soth = 3 (<5) and dz_soth_I2 = 54.7% (moderate heterogeneity in supportive evidence)"
+  ],
+  "supporting_metrics": [
+    "dz_ss_mean: -0.6553528878546621",
+    "dz_ss_ci: [-1.0478693894676954, -0.2628363862416287]",
+    "p_ss: 0.001066414164603",
+    "q_ss: 0.1512665304983378",
+    "kappa_ss: 1.0",
+    "n_studies_ss: 1",
+    "dz_ss_I2: 0.0",
+    "dz_soth_mean: -1.0319400934544876",
+    "dz_soth_ci: [-1.3934443563304972, -0.6704358305784779]",
+    "p_soth: 2.2080100192667373e-08",
+    "q_soth: 3.4377581101807664e-06",
+    "kappa_soth: 1.0",
+    "n_studies_soth: 3",
+    "dz_soth_I2: 54.72005014014066"
+  ],
+  "recommendations": [
+    "Prioritize replication: obtain at least several independent Shock vs Sepsis cohorts (aim for n_studies_ss \u2265 5) to confirm effect size and reduce risk of single-study bias.",
+    "Perform a meta-analysis including additional SS datasets; reassess q_ss and heterogeneity (I\u00b2) once more studies are available.",
+    "Validate the pair experimentally (orthogonal assays, e.g., qPCR/protein) and assess clinical confounders/stratified analyses to address potential sources of heterogeneity seen in SOTH.",
+    "If limited SS data persists, treat SOTH as supportive evidence but interpret cautiously given moderate I\u00b2 and small study count; consider standardized preprocessing and sensitivity analyses."
+  ]
+  }

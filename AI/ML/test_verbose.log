@@ -1,0 +1,851 @@
+2025-09-25 19:12:29,182 - __main__ - INFO - Testing gene_pair_agent imports...
+2025-09-25 19:12:30,343 - __main__ - INFO - Testing visualization imports...
+2025-09-25 19:12:30,527 - __main__ - INFO - Testing config imports...
+2025-09-25 19:12:30,527 - __main__ - ERROR - Imports test crashed: name 'Dict' is not defined
+2025-09-25 19:12:30,537 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 551, in main
+    result = test_func()
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 48, in test_imports
+    from config import settings
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\__init__.py", line 7, in <module>
+    from .settings import (
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\settings.py", line 121, in <module>
+    def load_config(config_path: str = None) -> Dict[str, Any]:
+NameError: name 'Dict' is not defined
+
+2025-09-25 19:12:30,537 - __main__ - INFO - Creating rules engine...
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:12:30,537 - __main__ - INFO - Getting rule summary...
+2025-09-25 19:12:30,537 - __main__ - INFO - Adding custom rule...
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - INFO - Added rule: Test Rule
+2025-09-25 19:12:30,537 - __main__ - INFO - Testing rule evaluation...
+2025-09-25 19:12:30,537 - __main__ - INFO - Sample data: {'p_ss': 0.01, 'p_soth': 0.005, 'abs_dz_ss': 0.8, 'abs_dz_soth': 1.2, 'dz_ss_z': 2.5, 'dz_soth_z': 3.5, 'q_ss': 0.02, 'q_soth': 0.01, 'dz_ss_I2': 25, 'dz_soth_I2': 60}
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Statistical Significance': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Effect Size Strength': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Z-Score Strength': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'FDR Correction': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Consistency': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - __main__ - INFO - Testing individual rule evaluation...
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Statistical Significance': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - __main__ - INFO - Rule 'Statistical Significance': 0.000 (condition: (p_ss < 0.1) AND (p_soth < 0.01))
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Effect Size Strength': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - __main__ - INFO - Rule 'Effect Size Strength': 0.000 (condition: (abs_dz_ss > 0.3) AND (abs_dz_soth > 1.0))
+2025-09-25 19:12:30,537 - gene_pair_agent.rules_engine - WARNING - Error evaluating rule 'Z-Score Strength': invalid syntax. Perhaps you forgot a comma? (<string>, line 1)
+2025-09-25 19:12:30,537 - __main__ - INFO - Rule 'Z-Score Strength': 0.000 (condition: (abs(dz_ss_z) > 1.5) AND (abs(dz_soth_z) > 3.0))
+2025-09-25 19:12:30,537 - __main__ - INFO - Importing FeatureEngineering...
+2025-09-25 19:12:30,537 - __main__ - INFO - Creating sample data...
+2025-09-25 19:12:30,574 - __main__ - INFO - Creating FeatureEngineering instance...
+2025-09-25 19:12:30,574 - __main__ - INFO - Running fit_transform...
+2025-09-25 19:12:30,589 - gene_pair_agent.feature_engineering - INFO - Created 18 derived features
+2025-09-25 19:12:30,601 - gene_pair_agent.feature_engineering - INFO - Selected 33 features after cleaning
+2025-09-25 19:12:30,610 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 33 -> 5 components
+2025-09-25 19:12:30,610 - __main__ - INFO - Testing transform method...
+2025-09-25 19:12:30,619 - gene_pair_agent.feature_engineering - INFO - Created 18 derived features
+2025-09-25 19:12:30,622 - __main__ - INFO - Getting feature importance...
+2025-09-25 19:12:30,624 - __main__ - INFO - Testing clustering...
+2025-09-25 19:12:30,626 - __main__ - ERROR - Feature engineering test failed: Negative values in data passed to X.
+2025-09-25 19:12:30,733 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 185, in test_feature_engineering
+    cluster_labels = fe.cluster_features(features, eps=0.3, min_samples=5)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\feature_engineering.py", line 261, in cluster_features
+    cluster_labels = dbscan.fit_predict(distance_matrix)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 473, in fit_predict
+    self.fit(X, sample_weight=sample_weight)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 419, in fit
+    neighbors_model.fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_unsupervised.py", line 179, in fit
+    return self._fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 583, in _fit
+    X = _check_precomputed(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 173, in _check_precomputed
+    X = check_array(X, ensure_non_negative=True, input_name="X")
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1147, in check_array
+    check_non_negative(array, whom)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1824, in check_non_negative
+    raise ValueError(f"Negative values in data passed to {whom}.")
+ValueError: Negative values in data passed to X.
+
+2025-09-25 19:12:30,736 - __main__ - INFO - Importing MetaAnalysisProcessor...
+2025-09-25 19:12:30,736 - __main__ - INFO - Creating MetaAnalysisProcessor...
+2025-09-25 19:12:30,736 - __main__ - INFO - Creating sample data...
+2025-09-25 19:12:30,740 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:12:30,743 - __main__ - INFO - Sample data info:
+2025-09-25 19:12:30,743 - __main__ - INFO - Columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:12:30,743 - __main__ - INFO - Data types:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:12:30,767 - __main__ - INFO - First few rows:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:12:30,815 - __main__ - INFO - Data summary:
+       n_studies_ss  n_studies_soth  dz_ss_mean   dz_ss_se  ...  abs_dz_soth       q_ss        q_soth  rank_score
+count      50.00000       50.000000   50.000000  50.000000  ...    50.000000  50.000000  5.000000e+01   50.000000
+mean        2.48000        5.220000   -0.417305   0.191620  ...     0.981635   0.128632  6.511466e-02    1.228621
+std         1.19932        1.418392    0.353917   0.056989  ...     0.473451   0.164790  9.908728e-02    0.381583
+min         1.00000        3.000000   -1.085746   0.102734  ...     0.008444   0.000003  4.902501e-10    0.600615
+25%         1.00000        4.000000   -0.670087   0.143785  ...     0.746439   0.013151  6.435690e-04    0.945554
+50%         2.50000        5.500000   -0.386170   0.195730  ...     0.924424   0.042451  1.876761e-02    1.303741
+75%         4.00000        6.000000   -0.158020   0.242281  ...     1.300963   0.192517  9.689518e-02    1.514561
+max         4.00000        7.000000    0.216963   0.293821  ...     2.087162   0.766745  4.239626e-01    1.917098
+
+[8 rows x 25 columns]
+2025-09-25 19:12:30,815 - __main__ - INFO - Validating data...
+2025-09-25 19:12:30,819 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 19:12:30,819 - __main__ - INFO - Cleaning data...
+2025-09-25 19:12:30,827 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (50, 32)
+2025-09-25 19:12:30,836 - __main__ - INFO - Getting summary statistics...
+2025-09-25 19:12:30,842 - __main__ - INFO - Summary stats: {'total_pairs': 50, 'unique_genes': 14, 'data_shape': (50, 32), 'columns': ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey', 'effect_size_composite', 'significance_composite']}
+2025-09-25 19:12:30,842 - __main__ - INFO - Importing necessary modules...
+2025-09-25 19:12:30,843 - __main__ - INFO - Creating sample data...
+2025-09-25 19:12:30,848 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 100 gene pairs
+2025-09-25 19:12:30,848 - __main__ - INFO - Sample data columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:12:30,848 - __main__ - INFO - Sample data dtypes:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:12:30,864 - __main__ - INFO - Sample data head:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_ss_mean has 92 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_ss_ci_low has 100 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_ss_ci_high has 63 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_ss_z has 92 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_soth_mean has 98 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,864 - __main__ - INFO - Column dz_soth_ci_low has 99 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,880 - __main__ - INFO - Column dz_soth_ci_high has 80 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,880 - __main__ - INFO - Column dz_soth_z has 98 negative values (normal for bioinformatics)
+2025-09-25 19:12:30,880 - __main__ - INFO - Initializing GenePairAnalyzer...
+2025-09-25 19:12:30,880 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:12:30,880 - __main__ - INFO - Fitting analyzer...
+2025-09-25 19:12:30,880 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 100 gene pairs
+2025-09-25 19:12:30,890 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 19:12:30,896 - gene_pair_agent.feature_engineering - INFO - Selected 45 features after cleaning
+2025-09-25 19:12:30,911 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 45 -> 5 components
+2025-09-25 19:12:32,573 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:12:32,573 - __main__ - INFO - Running prediction...
+2025-09-25 19:12:32,573 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 100 gene pairs
+2025-09-25 19:12:32,588 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 19:12:32,610 - __main__ - ERROR - Gene pair analyzer test failed: Negative values in data passed to X.
+2025-09-25 19:12:32,612 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 295, in test_gene_pair_analyzer
+    results = analyzer.predict(sample_data)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\gene_pair_analyzer.py", line 92, in predict
+    results = self._run_ensemble_analysis(data, features)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\gene_pair_analyzer.py", line 125, in _run_ensemble_analysis
+    dbscan_labels = DBSCAN(eps=0.3, min_samples=5, metric='precomputed').fit_predict(distance_matrix)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 473, in fit_predict
+    self.fit(X, sample_weight=sample_weight)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 419, in fit
+    neighbors_model.fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_unsupervised.py", line 179, in fit
+    return self._fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 583, in _fit
+    X = _check_precomputed(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 173, in _check_precomputed
+    X = check_array(X, ensure_non_negative=True, input_name="X")
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1147, in check_array
+    check_non_negative(array, whom)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1824, in check_non_negative
+    raise ValueError(f"Negative values in data passed to {whom}.")
+ValueError: Negative values in data passed to X.
+
+2025-09-25 19:12:32,614 - __main__ - INFO - Importing visualization modules...
+2025-09-25 19:12:32,614 - __main__ - INFO - Creating and analyzing data...
+2025-09-25 19:12:32,621 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:12:32,621 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:12:32,621 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 50 gene pairs
+2025-09-25 19:12:32,636 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 19:12:32,655 - gene_pair_agent.feature_engineering - INFO - Selected 45 features after cleaning
+2025-09-25 19:12:32,671 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 45 -> 5 components
+2025-09-25 19:12:32,819 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:12:32,819 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 50 gene pairs
+2025-09-25 19:12:32,831 - gene_pair_agent.feature_engineering - INFO - Created 20 derived features
+2025-09-25 19:12:32,854 - __main__ - ERROR - Visualization test failed: Negative values in data passed to X.
+2025-09-25 19:12:32,856 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 343, in test_visualization
+    results = analyzer.predict(sample_data)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\gene_pair_analyzer.py", line 92, in predict
+    results = self._run_ensemble_analysis(data, features)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\gene_pair_analyzer.py", line 125, in _run_ensemble_analysis
+    dbscan_labels = DBSCAN(eps=0.3, min_samples=5, metric='precomputed').fit_predict(distance_matrix)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 473, in fit_predict
+    self.fit(X, sample_weight=sample_weight)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 419, in fit
+    neighbors_model.fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_unsupervised.py", line 179, in fit
+    return self._fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 583, in _fit
+    X = _check_precomputed(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 173, in _check_precomputed
+    X = check_array(X, ensure_non_negative=True, input_name="X")
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1147, in check_array
+    check_non_negative(array, whom)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1824, in check_non_negative
+    raise ValueError(f"Negative values in data passed to {whom}.")
+ValueError: Negative values in data passed to X.
+
+2025-09-25 19:12:32,856 - __main__ - INFO - Importing config settings...
+2025-09-25 19:12:32,860 - __main__ - ERROR - Configuration test failed: name 'Dict' is not defined
+2025-09-25 19:12:32,860 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 405, in test_configuration
+    from config import settings
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\__init__.py", line 7, in <module>
+    from .settings import (
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\settings.py", line 121, in <module>
+    def load_config(config_path: str = None) -> Dict[str, Any]:
+NameError: name 'Dict' is not defined
+
+2025-09-25 19:12:32,862 - __main__ - INFO - Creating sample configuration file...
+2025-09-25 19:20:02,445 - __main__ - INFO - Testing gene_pair_agent imports...
+2025-09-25 19:20:03,131 - __main__ - INFO - Testing visualization imports...
+2025-09-25 19:20:03,239 - __main__ - INFO - Testing config imports...
+2025-09-25 19:20:03,255 - __main__ - ERROR - Imports test crashed: name 'Dict' is not defined
+2025-09-25 19:20:03,255 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 551, in main
+    result = test_func()
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 48, in test_imports
+    from config import settings
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\__init__.py", line 7, in <module>
+    from .settings import (
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\settings.py", line 121, in <module>
+    def load_config(config_path: str = None) -> Dict[str, Any]:
+NameError: name 'Dict' is not defined
+
+2025-09-25 19:20:03,255 - __main__ - INFO - Creating rules engine...
+2025-09-25 19:20:03,255 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:20:03,255 - __main__ - INFO - Getting rule summary...
+2025-09-25 19:20:03,255 - __main__ - INFO - Adding custom rule...
+2025-09-25 19:20:03,255 - gene_pair_agent.rules_engine - INFO - Added rule: Test Rule
+2025-09-25 19:20:03,255 - __main__ - INFO - Testing rule evaluation...
+2025-09-25 19:20:03,255 - __main__ - INFO - Sample data: {'p_ss': 0.01, 'p_soth': 0.005, 'abs_dz_ss': 0.8, 'abs_dz_soth': 1.2, 'dz_ss_z': 2.5, 'dz_soth_z': 3.5, 'q_ss': 0.02, 'q_soth': 0.01, 'dz_ss_I2': 25, 'dz_soth_I2': 60}
+2025-09-25 19:20:03,255 - __main__ - INFO - Testing individual rule evaluation...
+2025-09-25 19:20:03,255 - __main__ - INFO - Rule 'Statistical Significance': 0.250 (condition: (p_ss < 0.1) and (p_soth < 0.01))
+2025-09-25 19:20:03,255 - __main__ - INFO - Rule 'Effect Size Strength': 0.300 (condition: (abs_dz_ss > 0.3) and (abs_dz_soth > 1.0))
+2025-09-25 19:20:03,255 - __main__ - INFO - Rule 'Z-Score Strength': 0.200 (condition: (abs(dz_ss_z) > 1.5) and (abs(dz_soth_z) > 3.0))
+2025-09-25 19:20:03,255 - __main__ - INFO - Importing FeatureEngineering...
+2025-09-25 19:20:03,255 - __main__ - INFO - Creating sample data...
+2025-09-25 19:20:03,277 - __main__ - INFO - Creating FeatureEngineering instance...
+2025-09-25 19:20:03,277 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:20:03,277 - __main__ - INFO - Running fit_transform...
+2025-09-25 19:20:03,277 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (50, 15)
+2025-09-25 19:20:03,277 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:03,303 - gene_pair_agent.feature_engineering - INFO - Created 69 derived features
+2025-09-25 19:20:03,303 - gene_pair_agent.feature_engineering - INFO - Derived features created: (50, 84)
+2025-09-25 19:20:03,303 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:20:03,326 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:20:03,326 - gene_pair_agent.feature_engineering - INFO - Selected 82 features after cleaning
+2025-09-25 19:20:03,326 - gene_pair_agent.feature_engineering - INFO - Features selected: (50, 82)
+2025-09-25 19:20:03,337 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -310.877, Max: 310.877
+2025-09-25 19:20:03,348 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.660, Std: 4.436
+2025-09-25 19:20:03,382 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (50, 82)
+2025-09-25 19:20:03,382 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -241.316, Max: 251.392
+2025-09-25 19:20:03,392 - gene_pair_agent.feature_engineering - INFO - PCA completed: (50, 5)
+2025-09-25 19:20:03,392 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.86374061 0.10936524 0.00697023 0.00394648 0.00295016]
+2025-09-25 19:20:03,392 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 82 -> 5 components
+2025-09-25 19:20:03,392 - __main__ - INFO - Testing transform method...
+2025-09-25 19:20:03,392 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (10, 15)
+2025-09-25 19:20:03,392 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:03,412 - gene_pair_agent.feature_engineering - INFO - Created 69 derived features
+2025-09-25 19:20:03,412 - __main__ - INFO - Getting feature importance...
+2025-09-25 19:20:03,412 - __main__ - INFO - Testing clustering...
+2025-09-25 19:20:03,412 - __main__ - ERROR - Feature engineering test failed: Negative values in data passed to X.
+2025-09-25 19:20:03,412 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 185, in test_feature_engineering
+    cluster_labels = fe.cluster_features(features, eps=0.3, min_samples=5)
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\gene_pair_agent\feature_engineering.py", line 375, in cluster_features
+    cluster_labels = dbscan.fit_predict(distance_matrix)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 473, in fit_predict
+    self.fit(X, sample_weight=sample_weight)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\cluster\_dbscan.py", line 419, in fit
+    neighbors_model.fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\base.py", line 1365, in wrapper
+    return fit_method(estimator, *args, **kwargs)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_unsupervised.py", line 179, in fit
+    return self._fit(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 583, in _fit
+    X = _check_precomputed(X)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\neighbors\_base.py", line 173, in _check_precomputed
+    X = check_array(X, ensure_non_negative=True, input_name="X")
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1147, in check_array
+    check_non_negative(array, whom)
+  File "C:\venvs\ref310\lib\site-packages\sklearn\utils\validation.py", line 1824, in check_non_negative
+    raise ValueError(f"Negative values in data passed to {whom}.")
+ValueError: Negative values in data passed to X.
+
+2025-09-25 19:20:03,412 - __main__ - INFO - Importing MetaAnalysisProcessor...
+2025-09-25 19:20:03,412 - __main__ - INFO - Creating MetaAnalysisProcessor...
+2025-09-25 19:20:03,412 - __main__ - INFO - Creating sample data...
+2025-09-25 19:20:03,428 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:20:03,428 - __main__ - INFO - Sample data info:
+2025-09-25 19:20:03,428 - __main__ - INFO - Columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:20:03,429 - __main__ - INFO - Data types:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:20:03,444 - __main__ - INFO - First few rows:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:20:03,477 - __main__ - INFO - Data summary:
+       n_studies_ss  n_studies_soth  dz_ss_mean   dz_ss_se  ...  abs_dz_soth       q_ss        q_soth  rank_score
+count      50.00000       50.000000   50.000000  50.000000  ...    50.000000  50.000000  5.000000e+01   50.000000
+mean        2.48000        5.220000   -0.417305   0.191620  ...     0.981635   0.128632  6.511466e-02    1.228621
+std         1.19932        1.418392    0.353917   0.056989  ...     0.473451   0.164790  9.908728e-02    0.381583
+min         1.00000        3.000000   -1.085746   0.102734  ...     0.008444   0.000003  4.902501e-10    0.600615
+25%         1.00000        4.000000   -0.670087   0.143785  ...     0.746439   0.013151  6.435690e-04    0.945554
+50%         2.50000        5.500000   -0.386170   0.195730  ...     0.924424   0.042451  1.876761e-02    1.303741
+75%         4.00000        6.000000   -0.158020   0.242281  ...     1.300963   0.192517  9.689518e-02    1.514561
+max         4.00000        7.000000    0.216963   0.293821  ...     2.087162   0.766745  4.239626e-01    1.917098
+
+[8 rows x 25 columns]
+2025-09-25 19:20:03,477 - __main__ - INFO - Validating data...
+2025-09-25 19:20:03,477 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 19:20:03,477 - __main__ - INFO - Cleaning data...
+2025-09-25 19:20:03,477 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (50, 32)
+2025-09-25 19:20:03,477 - __main__ - INFO - Getting summary statistics...
+2025-09-25 19:20:03,493 - __main__ - INFO - Summary stats: {'total_pairs': 50, 'unique_genes': 14, 'data_shape': (50, 32), 'columns': ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey', 'effect_size_composite', 'significance_composite']}
+2025-09-25 19:20:03,493 - __main__ - INFO - Importing necessary modules...
+2025-09-25 19:20:03,493 - __main__ - INFO - Creating sample data...
+2025-09-25 19:20:03,493 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 100 gene pairs
+2025-09-25 19:20:03,493 - __main__ - INFO - Sample data columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:20:03,493 - __main__ - INFO - Sample data dtypes:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:20:03,507 - __main__ - INFO - Sample data head:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_ss_mean has 92 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_ss_ci_low has 100 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_ss_ci_high has 63 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_ss_z has 92 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_soth_mean has 98 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_soth_ci_low has 99 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_soth_ci_high has 80 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Column dz_soth_z has 98 negative values (normal for bioinformatics)
+2025-09-25 19:20:03,507 - __main__ - INFO - Initializing GenePairAnalyzer...
+2025-09-25 19:20:03,507 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:20:03,507 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:20:03,507 - gene_pair_agent.gene_pair_analyzer - INFO - Initialized GenePairAnalyzer with n_features=5, contamination=0.1
+2025-09-25 19:20:03,507 - __main__ - INFO - Fitting analyzer...
+2025-09-25 19:20:03,507 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 100 gene pairs
+2025-09-25 19:20:03,507 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (100, 30)
+2025-09-25 19:20:03,507 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:03,542 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:20:03,542 - gene_pair_agent.feature_engineering - INFO - Derived features created: (100, 115)
+2025-09-25 19:20:03,542 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:20:03,574 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:20:03,575 - gene_pair_agent.feature_engineering - INFO - Selected 108 features after cleaning
+2025-09-25 19:20:03,575 - gene_pair_agent.feature_engineering - INFO - Features selected: (100, 108)
+2025-09-25 19:20:03,581 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -39.864, Max: 179.208
+2025-09-25 19:20:03,592 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.316, Std: 3.608
+2025-09-25 19:20:03,599 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (100, 108)
+2025-09-25 19:20:03,599 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -77.608, Max: 222.674
+2025-09-25 19:20:03,599 - gene_pair_agent.feature_engineering - INFO - PCA completed: (100, 5)
+2025-09-25 19:20:03,599 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.89154151 0.0463461  0.01675682 0.01145492 0.00755607]
+2025-09-25 19:20:03,599 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 108 -> 5 components
+2025-09-25 19:20:03,599 - gene_pair_agent.gene_pair_analyzer - INFO - Feature engineering completed: (100, 5)
+2025-09-25 19:20:03,599 - gene_pair_agent.gene_pair_analyzer - INFO - Feature scaling completed: (100, 5)
+2025-09-25 19:20:03,599 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting Isolation Forest...
+2025-09-25 19:20:03,678 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:20:03,678 - __main__ - INFO - Running prediction...
+2025-09-25 19:20:03,678 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 100 gene pairs
+2025-09-25 19:20:03,678 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (100, 30)
+2025-09-25 19:20:03,678 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:03,698 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Features transformed: (100, 5)
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Features scaled: (100, 5)
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Running ensemble analysis...
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Running Isolation Forest...
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Anomaly detection completed: 10 outliers detected
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Preparing non-negative features for algorithms that require them...
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Running DBSCAN clustering...
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - WARNING - DBSCAN failed: Negative values in data passed to X.
+2025-09-25 19:20:03,708 - gene_pair_agent.gene_pair_analyzer - INFO - Running Gaussian Mixture Model...
+2025-09-25 19:20:05,249 - gene_pair_agent.gene_pair_analyzer - INFO - GMM completed: 3 components
+2025-09-25 19:20:05,249 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating clustering quality metrics...
+2025-09-25 19:20:05,249 - gene_pair_agent.gene_pair_analyzer - INFO - Quality metrics - Silhouette: -1.000, Calinski-Harabasz: -1.0
+2025-09-25 19:20:05,249 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating ensemble consensus...
+2025-09-25 19:20:05,306 - gene_pair_agent.rules_engine - INFO - Positive control ('MS4A4A', 'CD86') ranks at 81.0% percentile
+2025-09-25 19:20:05,308 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis completed successfully
+2025-09-25 19:20:05,308 - __main__ - INFO - Checking results structure...
+2025-09-25 19:20:05,309 - __main__ - INFO - First recommendation: {'gene_a': np.str_('SULF2'), 'gene_b': np.str_('CD82'), 'rules_score': 0.16, 'ml_confidence': 0.6, 'combined_score': 0.292, 'is_high_confidence': False, 'is_outlier': True, 'rank': 1, 'statistical_measures': {'p_ss': 0.08479350903015978, 'p_soth': 4.660241934318783e-05, 'dz_ss_mean': -0.8004860029684746, 'dz_soth_mean': -1.1405501464429775, 'q_ss': 0.16958701806031956, 'q_soth': 9.320483868637566e-05}}
+2025-09-25 19:20:05,309 - __main__ - INFO - Getting analysis summary...
+2025-09-25 19:20:05,310 - __main__ - INFO - Full summary: {'status': 'completed', 'summary_stats': {'total_pairs': 100, 'outliers_detected': np.int64(10), 'clusters_found': 0, 'silhouette_score': -1, 'positive_control_validated': True, 'significant_pairs_ss': np.int64(53), 'significant_pairs_soth': np.int64(56), 'large_effect_pairs': np.int64(27)}, 'recommendations_count': 20, 'top_recommendations': [{'gene_a': np.str_('SULF2'), 'gene_b': np.str_('CD82'), 'rules_score': 0.16, 'ml_confidence': 0.6, 'combined_score': 0.292, 'is_high_confidence': False, 'is_outlier': True, 'rank': 1, 'statistical_measures': {'p_ss': 0.08479350903015978, 'p_soth': 4.660241934318783e-05, 'dz_ss_mean': -0.8004860029684746, 'dz_soth_mean': -1.1405501464429775, 'q_ss': 0.16958701806031956, 'q_soth': 9.320483868637566e-05}}, {'gene_a': np.str_('PLAC8'), 'gene_b': np.str_('CD86'), 'rules_score': 0.13999999999999999, 'ml_confidence': 0.6, 'combined_score': 0.27799999999999997, 'is_high_confidence': False, 'is_outlier': True, 'rank': 2, 'statistical_measures': {'p_ss': 0.011302985333108915, 'p_soth': 0.00026373023694176243, 'dz_ss_mean': -0.47967392817135124, 'dz_soth_mean': -0.7999427626758915, 'q_ss': 0.02260597066621783, 'q_soth': 0.0005274604738835249}}, {'gene_a': np.str_('MS4A4A'), 'gene_b': np.str_('KLF7'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 3, 'statistical_measures': {'p_ss': 0.006328454968199545, 'p_soth': 0.0015065549825161305, 'dz_ss_mean': -0.5621497670313723, 'dz_soth_mean': -1.31173869749248, 'q_ss': 0.01265690993639909, 'q_soth': 0.003013109965032261}}, {'gene_a': np.str_('SULF2'), 'gene_b': np.str_('CD82'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 4, 'statistical_measures': {'p_ss': 0.017363422096280296, 'p_soth': 0.0026600800224993964, 'dz_ss_mean': -0.9057351664729991, 'dz_soth_mean': -1.2792101847163801, 'q_ss': 0.03472684419256059, 'q_soth': 0.005320160044998793}}, {'gene_a': np.str_('RAB20'), 'gene_b': np.str_('MS4A4A'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 5, 'statistical_measures': {'p_ss': 0.018265819979850415, 'p_soth': 1.1959100451943591e-05, 'dz_ss_mean': -0.39781542461349206, 'dz_soth_mean': -1.0068889776335959, 'q_ss': 0.03653163995970083, 'q_soth': 2.3918200903887182e-05}}, {'gene_a': np.str_('DHCR7'), 'gene_b': np.str_('RGCC'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 6, 'statistical_measures': {'p_ss': 0.007317120571907437, 'p_soth': 0.0005543905355508917, 'dz_ss_mean': -0.5987821121167454, 'dz_soth_mean': -1.2351407233647218, 'q_ss': 0.014634241143814874, 'q_soth': 0.0011087810711017834}}, {'gene_a': np.str_('MS4A4A'), 'gene_b': np.str_('CKAP4'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 7, 'statistical_measures': {'p_ss': 0.03250926801222883, 'p_soth': 3.969634133702487e-07, 'dz_ss_mean': -0.4601090977559372, 'dz_soth_mean': -1.3500604074695866, 'q_ss': 0.06501853602445766, 'q_soth': 7.939268267404974e-07}}, {'gene_a': np.str_('CD82'), 'gene_b': np.str_('MTMR11'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 8, 'statistical_measures': {'p_ss': 0.022495545961603025, 'p_soth': 0.002548747791494017, 'dz_ss_mean': -0.5045579386309968, 'dz_soth_mean': -1.596529977455118, 'q_ss': 0.04499109192320605, 'q_soth': 0.005097495582988034}}, {'gene_a': np.str_('SULF2'), 'gene_b': np.str_('DHRS9'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 9, 'statistical_measures': {'p_ss': 0.024656725887763162, 'p_soth': 0.0006313837054929699, 'dz_ss_mean': -0.5950465283875392, 'dz_soth_mean': -1.5708445570667524, 'q_ss': 0.049313451775526325, 'q_soth': 0.0012627674109859399}}, {'gene_a': np.str_('TTYH2'), 'gene_b': np.str_('MTMR11'), 'rules_score': 0.2, 'ml_confidence': 0.0, 'combined_score': 0.13999999999999999, 'is_high_confidence': False, 'is_outlier': False, 'rank': 10, 'statistical_measures': {'p_ss': 0.019079533796435986, 'p_soth': 0.0010101177545018063, 'dz_ss_mean': -0.6453082832817066, 'dz_soth_mean': -1.0547746457346017, 'q_ss': 0.03815906759287197, 'q_soth': 0.0020202355090036127}}], 'clustering_quality': {'silhouette_score': -1, 'calinski_harabasz_score': -1, 'n_clusters_found': 0}, 'feature_engineering_summary': {'status': 'fitted', 'n_original_features': 108, 'n_components': 5, 'explained_variance_ratio': [0.8915415135703302, 0.04634610430541016, 0.016756824672977528, 0.011454921772914167, 0.007556072849290701], 'total_explained_variance': 0.9736554371709228, 'feature_names': ['n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'effect_size_ratio', 'effect_size_diff', 'effect_size_sum', 'effect_size_product', 'log_p_ss', 'log_p_soth', 'p_harmonic_mean', 'ci_ss_width', 'ci_ss_center', 'ci_ss_relative_width', 'ci_soth_width', 'ci_soth_center', 'ci_soth_relative_width', 'i2_ratio', 'i2_max', 'i2_min', 'i2_mean', 'z_composite', 'z_ratio', 'z_sum', 'z_product', 'total_studies', 'study_ratio', 'study_log_ratio', 'log_q_ss', 'log_q_soth', 'q_composite', 'q_max', 'q_min', 'n_studies_ss_abs', 'n_studies_soth_abs', 'dz_ss_mean_abs', 'dz_ss_se_abs', 'dz_ss_ci_low_abs', 'dz_ss_ci_high_abs', 'dz_ss_Q_abs', 'dz_ss_I2_abs', 'dz_ss_z_abs', 'p_ss_abs', 'dz_soth_mean_abs', 'dz_soth_se_abs', 'dz_soth_ci_low_abs', 'dz_soth_ci_high_abs', 'dz_soth_Q_abs', 'dz_soth_I2_abs', 'dz_soth_z_abs', 'p_soth_abs', 'kappa_ss_abs', 'kappa_soth_abs', 'abs_dz_ss_abs', 'abs_dz_soth_abs', 'q_ss_abs', 'q_soth_abs', 'rank_score_abs', 'effect_size_ratio_abs', 'effect_size_diff_abs', 'effect_size_sum_abs', 'effect_size_product_abs', 'log_p_ss_abs', 'log_p_soth_abs', 'p_harmonic_mean_abs', 'ci_ss_width_abs', 'ci_ss_center_abs', 'ci_ss_relative_width_abs', 'ci_soth_width_abs', 'ci_soth_center_abs', 'ci_soth_relative_width_abs', 'i2_ratio_abs', 'i2_max_abs', 'i2_min_abs', 'i2_mean_abs', 'z_composite_abs', 'z_ratio_abs', 'z_sum_abs', 'z_product_abs', 'total_studies_abs', 'study_ratio_abs', 'study_log_ratio_abs', 'log_q_ss_abs', 'log_q_soth_abs', 'q_composite_abs', 'q_max_abs', 'q_min_abs']}}
+2025-09-25 19:20:05,311 - __main__ - INFO - Importing visualization modules...
+2025-09-25 19:20:05,312 - __main__ - INFO - Creating and analyzing data...
+2025-09-25 19:20:05,319 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:20:05,319 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:20:05,319 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:20:05,319 - gene_pair_agent.gene_pair_analyzer - INFO - Initialized GenePairAnalyzer with n_features=5, contamination=0.1
+2025-09-25 19:20:05,319 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 50 gene pairs
+2025-09-25 19:20:05,319 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (50, 30)
+2025-09-25 19:20:05,321 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:05,365 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:20:05,365 - gene_pair_agent.feature_engineering - INFO - Derived features created: (50, 115)
+2025-09-25 19:20:05,365 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:20:05,417 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:20:05,417 - gene_pair_agent.feature_engineering - INFO - Selected 108 features after cleaning
+2025-09-25 19:20:05,418 - gene_pair_agent.feature_engineering - INFO - Features selected: (50, 108)
+2025-09-25 19:20:05,426 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -39.864, Max: 179.208
+2025-09-25 19:20:05,434 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.341, Std: 3.969
+2025-09-25 19:20:05,449 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (50, 108)
+2025-09-25 19:20:05,449 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -63.926, Max: 245.377
+2025-09-25 19:20:05,451 - gene_pair_agent.feature_engineering - INFO - PCA completed: (50, 5)
+2025-09-25 19:20:05,451 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.96262939 0.01169151 0.01051886 0.00358812 0.00244152]
+2025-09-25 19:20:05,451 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 108 -> 5 components
+2025-09-25 19:20:05,451 - gene_pair_agent.gene_pair_analyzer - INFO - Feature engineering completed: (50, 5)
+2025-09-25 19:20:05,456 - gene_pair_agent.gene_pair_analyzer - INFO - Feature scaling completed: (50, 5)
+2025-09-25 19:20:05,456 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting Isolation Forest...
+2025-09-25 19:20:05,587 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:20:05,588 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 50 gene pairs
+2025-09-25 19:20:05,588 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (50, 30)
+2025-09-25 19:20:05,588 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:20:05,624 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:20:05,633 - gene_pair_agent.gene_pair_analyzer - INFO - Features transformed: (50, 5)
+2025-09-25 19:20:05,633 - gene_pair_agent.gene_pair_analyzer - INFO - Features scaled: (50, 5)
+2025-09-25 19:20:05,634 - gene_pair_agent.gene_pair_analyzer - INFO - Running ensemble analysis...
+2025-09-25 19:20:05,634 - gene_pair_agent.gene_pair_analyzer - INFO - Running Isolation Forest...
+2025-09-25 19:20:05,644 - gene_pair_agent.gene_pair_analyzer - INFO - Anomaly detection completed: 5 outliers detected
+2025-09-25 19:20:05,644 - gene_pair_agent.gene_pair_analyzer - INFO - Preparing non-negative features for algorithms that require them...
+2025-09-25 19:20:05,645 - gene_pair_agent.gene_pair_analyzer - INFO - Running DBSCAN clustering...
+2025-09-25 19:20:05,645 - gene_pair_agent.gene_pair_analyzer - WARNING - DBSCAN failed: Negative values in data passed to X.
+2025-09-25 19:20:05,645 - gene_pair_agent.gene_pair_analyzer - INFO - Running Gaussian Mixture Model...
+2025-09-25 19:20:05,656 - gene_pair_agent.gene_pair_analyzer - INFO - GMM completed: 3 components
+2025-09-25 19:20:05,656 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating clustering quality metrics...
+2025-09-25 19:20:05,656 - gene_pair_agent.gene_pair_analyzer - INFO - Quality metrics - Silhouette: -1.000, Calinski-Harabasz: -1.0
+2025-09-25 19:20:05,656 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating ensemble consensus...
+2025-09-25 19:20:05,684 - gene_pair_agent.rules_engine - INFO - Positive control ('MS4A4A', 'CD86') ranks at 86.0% percentile
+2025-09-25 19:20:05,686 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis completed successfully
+2025-09-25 19:20:05,686 - __main__ - INFO - Creating ChartGenerator...
+2025-09-25 19:20:05,687 - __main__ - INFO - Creating box plot...
+2025-09-25 19:20:05,862 - __main__ - INFO - Creating scatter plot...
+2025-09-25 19:20:05,894 - __main__ - INFO - Creating clustering visualization...
+2025-09-25 19:20:06,037 - __main__ - INFO - Creating ranking chart...
+2025-09-25 19:20:06,082 - __main__ - INFO - Importing config settings...
+2025-09-25 19:20:06,085 - __main__ - ERROR - Configuration test failed: name 'Dict' is not defined
+2025-09-25 19:20:06,085 - __main__ - ERROR - Traceback: Traceback (most recent call last):
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\test_system_verbose.py", line 405, in test_configuration
+    from config import settings
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\__init__.py", line 7, in <module>
+    from .settings import (
+  File "C:\venvs\ref310\Projects\Bioinformatics_Database\AI\ML\config\settings.py", line 121, in <module>
+    def load_config(config_path: str = None) -> Dict[str, Any]:
+NameError: name 'Dict' is not defined
+
+2025-09-25 19:20:06,089 - __main__ - INFO - Creating sample configuration file...
+2025-09-25 19:29:13,662 - __main__ - INFO - Testing gene_pair_agent imports...
+2025-09-25 19:29:14,735 - __main__ - INFO - Testing visualization imports...
+2025-09-25 19:29:14,912 - __main__ - INFO - Testing config imports...
+2025-09-25 19:29:14,929 - __main__ - INFO - Creating rules engine...
+2025-09-25 19:29:14,930 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:29:14,930 - __main__ - INFO - Getting rule summary...
+2025-09-25 19:29:14,930 - __main__ - INFO - Adding custom rule...
+2025-09-25 19:29:14,930 - gene_pair_agent.rules_engine - INFO - Added rule: Test Rule
+2025-09-25 19:29:14,930 - __main__ - INFO - Testing rule evaluation...
+2025-09-25 19:29:14,930 - __main__ - INFO - Sample data: {'p_ss': 0.01, 'p_soth': 0.005, 'abs_dz_ss': 0.8, 'abs_dz_soth': 1.2, 'dz_ss_z': 2.5, 'dz_soth_z': 3.5, 'q_ss': 0.02, 'q_soth': 0.01, 'dz_ss_I2': 25, 'dz_soth_I2': 60}
+2025-09-25 19:29:14,930 - __main__ - INFO - Testing individual rule evaluation...
+2025-09-25 19:29:14,930 - __main__ - INFO - Rule 'Statistical Significance': 0.250 (condition: (p_ss < 0.1) and (p_soth < 0.01))
+2025-09-25 19:29:14,930 - __main__ - INFO - Rule 'Effect Size Strength': 0.300 (condition: (abs_dz_ss > 0.3) and (abs_dz_soth > 1.0))
+2025-09-25 19:29:14,930 - __main__ - INFO - Rule 'Z-Score Strength': 0.200 (condition: (abs(dz_ss_z) > 1.5) and (abs(dz_soth_z) > 3.0))
+2025-09-25 19:29:14,930 - __main__ - INFO - Importing FeatureEngineering...
+2025-09-25 19:29:14,930 - __main__ - INFO - Creating sample data...
+2025-09-25 19:29:14,961 - __main__ - INFO - Creating FeatureEngineering instance...
+2025-09-25 19:29:14,961 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:29:14,961 - __main__ - INFO - Running fit_transform...
+2025-09-25 19:29:14,961 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (50, 15)
+2025-09-25 19:29:14,962 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:14,985 - gene_pair_agent.feature_engineering - INFO - Created 69 derived features
+2025-09-25 19:29:14,985 - gene_pair_agent.feature_engineering - INFO - Derived features created: (50, 84)
+2025-09-25 19:29:14,985 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:29:15,004 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:29:15,009 - gene_pair_agent.feature_engineering - INFO - Selected 82 features after cleaning
+2025-09-25 19:29:15,009 - gene_pair_agent.feature_engineering - INFO - Features selected: (50, 82)
+2025-09-25 19:29:15,013 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -310.877, Max: 310.877
+2025-09-25 19:29:15,019 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.660, Std: 4.436
+2025-09-25 19:29:15,029 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (50, 82)
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -241.316, Max: 251.392
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - PCA completed: (50, 5)
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.86374061 0.10936524 0.00697023 0.00394648 0.00295016]
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 82 -> 5 components
+2025-09-25 19:29:15,030 - __main__ - INFO - Testing transform method...
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (10, 15)
+2025-09-25 19:29:15,030 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:15,046 - gene_pair_agent.feature_engineering - INFO - Created 69 derived features
+2025-09-25 19:29:15,061 - __main__ - INFO - Getting feature importance...
+2025-09-25 19:29:15,062 - __main__ - INFO - Testing clustering...
+2025-09-25 19:29:15,063 - __main__ - INFO - Testing outlier detection...
+2025-09-25 19:29:15,161 - __main__ - INFO - Importing MetaAnalysisProcessor...
+2025-09-25 19:29:15,161 - __main__ - INFO - Creating MetaAnalysisProcessor...
+2025-09-25 19:29:15,161 - __main__ - INFO - Creating sample data...
+2025-09-25 19:29:15,165 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:29:15,165 - __main__ - INFO - Sample data info:
+2025-09-25 19:29:15,165 - __main__ - INFO - Columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:29:15,166 - __main__ - INFO - Data types:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:29:15,186 - __main__ - INFO - First few rows:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:29:15,230 - __main__ - INFO - Data summary:
+       n_studies_ss  n_studies_soth  dz_ss_mean   dz_ss_se  ...  abs_dz_soth       q_ss        q_soth  rank_score
+count      50.00000       50.000000   50.000000  50.000000  ...    50.000000  50.000000  5.000000e+01   50.000000
+mean        2.48000        5.220000   -0.417305   0.191620  ...     0.981635   0.128632  6.511466e-02    1.228621
+std         1.19932        1.418392    0.353917   0.056989  ...     0.473451   0.164790  9.908728e-02    0.381583
+min         1.00000        3.000000   -1.085746   0.102734  ...     0.008444   0.000003  4.902501e-10    0.600615
+25%         1.00000        4.000000   -0.670087   0.143785  ...     0.746439   0.013151  6.435690e-04    0.945554
+50%         2.50000        5.500000   -0.386170   0.195730  ...     0.924424   0.042451  1.876761e-02    1.303741
+75%         4.00000        6.000000   -0.158020   0.242281  ...     1.300963   0.192517  9.689518e-02    1.514561
+max         4.00000        7.000000    0.216963   0.293821  ...     2.087162   0.766745  4.239626e-01    1.917098
+
+[8 rows x 25 columns]
+2025-09-25 19:29:15,230 - __main__ - INFO - Validating data...
+2025-09-25 19:29:15,238 - gene_pair_agent.meta_analysis_processor - INFO - Data validation completed. Valid: True
+2025-09-25 19:29:15,238 - __main__ - INFO - Cleaning data...
+2025-09-25 19:29:15,247 - gene_pair_agent.meta_analysis_processor - INFO - Data cleaning completed. Final shape: (50, 32)
+2025-09-25 19:29:15,247 - __main__ - INFO - Getting summary statistics...
+2025-09-25 19:29:15,263 - __main__ - INFO - Summary stats: {'total_pairs': 50, 'unique_genes': 14, 'data_shape': (50, 32), 'columns': ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey', 'effect_size_composite', 'significance_composite']}
+2025-09-25 19:29:15,263 - __main__ - INFO - Importing necessary modules...
+2025-09-25 19:29:15,263 - __main__ - INFO - Creating sample data...
+2025-09-25 19:29:15,268 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 100 gene pairs
+2025-09-25 19:29:15,268 - __main__ - INFO - Sample data columns: ['pair_id', 'n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey']
+2025-09-25 19:29:15,268 - __main__ - INFO - Sample data dtypes:
+pair_id             object
+n_studies_ss         int64
+n_studies_soth       int64
+dz_ss_mean         float64
+dz_ss_se           float64
+dz_ss_ci_low       float64
+dz_ss_ci_high      float64
+dz_ss_Q            float64
+dz_ss_I2           float64
+dz_ss_z            float64
+p_ss               float64
+dz_soth_mean       float64
+dz_soth_se         float64
+dz_soth_ci_low     float64
+dz_soth_ci_high    float64
+dz_soth_Q          float64
+dz_soth_I2         float64
+dz_soth_z          float64
+p_soth             float64
+kappa_ss           float64
+kappa_soth         float64
+abs_dz_ss          float64
+abs_dz_soth        float64
+q_ss               float64
+q_soth             float64
+rank_score         float64
+GeneAName           object
+GeneBName           object
+GeneAKey            object
+GeneBKey            object
+dtype: object
+2025-09-25 19:29:15,294 - __main__ - INFO - Sample data head:
+             pair_id  n_studies_ss  n_studies_soth  dz_ss_mean  ...  GeneAName  GeneBName  GeneAKey  GeneBKey
+0      TTYH2_SULF2_0             1               3   -0.833564  ...      TTYH2      SULF2        80        15
+1      DHCR7_DHRS9_1             4               6   -0.457261  ...      DHCR7      DHRS9         6        54
+2  ARHGEF10L_SULF2_2             3               7   -0.434409  ...  ARHGEF10L      SULF2        35        35
+3      MS4A4A_KLF7_3             1               5   -0.562150  ...     MS4A4A       KLF7        15        90
+4  ARHGEF10L_CKAP4_4             1               3   -0.925625  ...  ARHGEF10L      CKAP4        89        62
+
+[5 rows x 30 columns]
+2025-09-25 19:29:15,294 - __main__ - INFO - Column dz_ss_mean has 92 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,294 - __main__ - INFO - Column dz_ss_ci_low has 100 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,294 - __main__ - INFO - Column dz_ss_ci_high has 63 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,297 - __main__ - INFO - Column dz_ss_z has 92 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,297 - __main__ - INFO - Column dz_soth_mean has 98 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,298 - __main__ - INFO - Column dz_soth_ci_low has 99 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,298 - __main__ - INFO - Column dz_soth_ci_high has 80 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,298 - __main__ - INFO - Column dz_soth_z has 98 negative values (normal for bioinformatics)
+2025-09-25 19:29:15,299 - __main__ - INFO - Initializing GenePairAnalyzer...
+2025-09-25 19:29:15,299 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:29:15,299 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:29:15,299 - gene_pair_agent.gene_pair_analyzer - INFO - Initialized GenePairAnalyzer with n_features=5, contamination=0.1
+2025-09-25 19:29:15,299 - __main__ - INFO - Fitting analyzer...
+2025-09-25 19:29:15,299 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 100 gene pairs
+2025-09-25 19:29:15,299 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (100, 30)
+2025-09-25 19:29:15,299 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:15,330 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:29:15,330 - gene_pair_agent.feature_engineering - INFO - Derived features created: (100, 115)
+2025-09-25 19:29:15,330 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:29:15,359 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:29:15,359 - gene_pair_agent.feature_engineering - INFO - Selected 108 features after cleaning
+2025-09-25 19:29:15,360 - gene_pair_agent.feature_engineering - INFO - Features selected: (100, 108)
+2025-09-25 19:29:15,362 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -39.864, Max: 179.208
+2025-09-25 19:29:15,362 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.316, Std: 3.608
+2025-09-25 19:29:15,381 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (100, 108)
+2025-09-25 19:29:15,381 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -77.608, Max: 222.674
+2025-09-25 19:29:15,397 - gene_pair_agent.feature_engineering - INFO - PCA completed: (100, 5)
+2025-09-25 19:29:15,397 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.89154151 0.0463461  0.01675682 0.01145492 0.00755607]
+2025-09-25 19:29:15,397 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 108 -> 5 components
+2025-09-25 19:29:15,397 - gene_pair_agent.gene_pair_analyzer - INFO - Feature engineering completed: (100, 5)
+2025-09-25 19:29:15,398 - gene_pair_agent.gene_pair_analyzer - INFO - Feature scaling completed: (100, 5)
+2025-09-25 19:29:15,398 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting Isolation Forest...
+2025-09-25 19:29:15,479 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:29:15,479 - __main__ - INFO - Running prediction...
+2025-09-25 19:29:15,479 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 100 gene pairs
+2025-09-25 19:29:15,479 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (100, 30)
+2025-09-25 19:29:15,479 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:15,511 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:29:15,521 - gene_pair_agent.gene_pair_analyzer - INFO - Features transformed: (100, 5)
+2025-09-25 19:29:15,521 - gene_pair_agent.gene_pair_analyzer - INFO - Features scaled: (100, 5)
+2025-09-25 19:29:15,521 - gene_pair_agent.gene_pair_analyzer - INFO - Running ensemble analysis...
+2025-09-25 19:29:15,521 - gene_pair_agent.gene_pair_analyzer - INFO - Running Isolation Forest...
+2025-09-25 19:29:15,530 - gene_pair_agent.gene_pair_analyzer - INFO - Anomaly detection completed: 10 outliers detected
+2025-09-25 19:29:15,530 - gene_pair_agent.gene_pair_analyzer - INFO - Preparing non-negative features for algorithms that require them...
+2025-09-25 19:29:15,530 - gene_pair_agent.gene_pair_analyzer - INFO - Running DBSCAN clustering...
+2025-09-25 19:29:15,530 - gene_pair_agent.gene_pair_analyzer - INFO - DBSCAN completed: 1 clusters, 4 noise points
+2025-09-25 19:29:15,530 - gene_pair_agent.gene_pair_analyzer - INFO - Running Gaussian Mixture Model...
+2025-09-25 19:29:17,054 - gene_pair_agent.gene_pair_analyzer - INFO - GMM completed: 3 components
+2025-09-25 19:29:17,054 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating clustering quality metrics...
+2025-09-25 19:29:17,054 - gene_pair_agent.gene_pair_analyzer - INFO - Quality metrics - Silhouette: -1.000, Calinski-Harabasz: -1.0
+2025-09-25 19:29:17,054 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating ensemble consensus...
+2025-09-25 19:29:17,117 - gene_pair_agent.rules_engine - INFO - Positive control ('MS4A4A', 'CD86') ranks at 81.0% percentile
+2025-09-25 19:29:17,118 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis completed successfully
+2025-09-25 19:29:17,118 - __main__ - INFO - Checking results structure...
+2025-09-25 19:29:17,119 - __main__ - INFO - First recommendation: {'gene_a': np.str_('MS4A4A'), 'gene_b': np.str_('KLF7'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 1, 'statistical_measures': {'p_ss': 0.006328454968199545, 'p_soth': 0.0015065549825161305, 'dz_ss_mean': -0.5621497670313723, 'dz_soth_mean': -1.31173869749248, 'q_ss': 0.01265690993639909, 'q_soth': 0.003013109965032261}}
+2025-09-25 19:29:17,119 - __main__ - INFO - Getting analysis summary...
+2025-09-25 19:29:17,119 - __main__ - INFO - Full summary: {'status': 'completed', 'summary_stats': {'total_pairs': 100, 'outliers_detected': np.int64(10), 'clusters_found': 1, 'silhouette_score': -1, 'positive_control_validated': True, 'significant_pairs_ss': np.int64(53), 'significant_pairs_soth': np.int64(56), 'large_effect_pairs': np.int64(27)}, 'recommendations_count': 20, 'top_recommendations': [{'gene_a': np.str_('MS4A4A'), 'gene_b': np.str_('KLF7'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 1, 'statistical_measures': {'p_ss': 0.006328454968199545, 'p_soth': 0.0015065549825161305, 'dz_ss_mean': -0.5621497670313723, 'dz_soth_mean': -1.31173869749248, 'q_ss': 0.01265690993639909, 'q_soth': 0.003013109965032261}}, {'gene_a': np.str_('SULF2'), 'gene_b': np.str_('CD82'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 2, 'statistical_measures': {'p_ss': 0.017363422096280296, 'p_soth': 0.0026600800224993964, 'dz_ss_mean': -0.9057351664729991, 'dz_soth_mean': -1.2792101847163801, 'q_ss': 0.03472684419256059, 'q_soth': 0.005320160044998793}}, {'gene_a': np.str_('RAB20'), 'gene_b': np.str_('MS4A4A'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 3, 'statistical_measures': {'p_ss': 0.018265819979850415, 'p_soth': 1.1959100451943591e-05, 'dz_ss_mean': -0.39781542461349206, 'dz_soth_mean': -1.0068889776335959, 'q_ss': 0.03653163995970083, 'q_soth': 2.3918200903887182e-05}}, {'gene_a': np.str_('DHCR7'), 'gene_b': np.str_('RGCC'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 4, 'statistical_measures': {'p_ss': 0.007317120571907437, 'p_soth': 0.0005543905355508917, 'dz_ss_mean': -0.5987821121167454, 'dz_soth_mean': -1.2351407233647218, 'q_ss': 0.014634241143814874, 'q_soth': 0.0011087810711017834}}, {'gene_a': np.str_('MS4A4A'), 'gene_b': np.str_('CKAP4'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 5, 'statistical_measures': {'p_ss': 0.03250926801222883, 'p_soth': 3.969634133702487e-07, 'dz_ss_mean': -0.4601090977559372, 'dz_soth_mean': -1.3500604074695866, 'q_ss': 0.06501853602445766, 'q_soth': 7.939268267404974e-07}}, {'gene_a': np.str_('CD82'), 'gene_b': np.str_('MTMR11'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 6, 'statistical_measures': {'p_ss': 0.022495545961603025, 'p_soth': 0.002548747791494017, 'dz_ss_mean': -0.5045579386309968, 'dz_soth_mean': -1.596529977455118, 'q_ss': 0.04499109192320605, 'q_soth': 0.005097495582988034}}, {'gene_a': np.str_('SULF2'), 'gene_b': np.str_('DHRS9'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 7, 'statistical_measures': {'p_ss': 0.024656725887763162, 'p_soth': 0.0006313837054929699, 'dz_ss_mean': -0.5950465283875392, 'dz_soth_mean': -1.5708445570667524, 'q_ss': 0.049313451775526325, 'q_soth': 0.0012627674109859399}}, {'gene_a': np.str_('TTYH2'), 'gene_b': np.str_('MTMR11'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 8, 'statistical_measures': {'p_ss': 0.019079533796435986, 'p_soth': 0.0010101177545018063, 'dz_ss_mean': -0.6453082832817066, 'dz_soth_mean': -1.0547746457346017, 'q_ss': 0.03815906759287197, 'q_soth': 0.0020202355090036127}}, {'gene_a': np.str_('KLF7'), 'gene_b': np.str_('CD86'), 'rules_score': 0.2, 'ml_confidence': 0.8, 'combined_score': 0.38, 'is_high_confidence': True, 'is_outlier': False, 'rank': 9, 'statistical_measures': {'p_ss': 0.08361434267308031, 'p_soth': 2.3659026919754514e-06, 'dz_ss_mean': -0.532981314611055, 'dz_soth_mean': -1.1038155264911895, 'q_ss': 0.16722868534616062, 'q_soth': 4.731805383950903e-06}}, {'gene_a': np.str_('DHRS9'), 'gene_b': np.str_('TTYH2'), 'rules_score': 0.18, 'ml_confidence': 0.8, 'combined_score': 0.366, 'is_high_confidence': True, 'is_outlier': False, 'rank': 10, 'statistical_measures': {'p_ss': 0.015222881615165787, 'p_soth': 0.00179140029995859, 'dz_ss_mean': -0.5739526077662422, 'dz_soth_mean': -1.7690178538827204, 'q_ss': 0.030445763230331574, 'q_soth': 0.00358280059991718}}], 'clustering_quality': {'silhouette_score': -1, 'calinski_harabasz_score': -1, 'n_clusters_found': 1}, 'feature_engineering_summary': {'status': 'fitted', 'n_original_features': 108, 'n_components': 5, 'explained_variance_ratio': [0.8915415135703302, 0.04634610430541016, 0.016756824672977528, 0.011454921772914167, 0.007556072849290701], 'total_explained_variance': 0.9736554371709228, 'feature_names': ['n_studies_ss', 'n_studies_soth', 'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high', 'dz_ss_Q', 'dz_ss_I2', 'dz_ss_z', 'p_ss', 'dz_soth_mean', 'dz_soth_se', 'dz_soth_ci_low', 'dz_soth_ci_high', 'dz_soth_Q', 'dz_soth_I2', 'dz_soth_z', 'p_soth', 'kappa_ss', 'kappa_soth', 'abs_dz_ss', 'abs_dz_soth', 'q_ss', 'q_soth', 'rank_score', 'effect_size_ratio', 'effect_size_diff', 'effect_size_sum', 'effect_size_product', 'log_p_ss', 'log_p_soth', 'p_harmonic_mean', 'ci_ss_width', 'ci_ss_center', 'ci_ss_relative_width', 'ci_soth_width', 'ci_soth_center', 'ci_soth_relative_width', 'i2_ratio', 'i2_max', 'i2_min', 'i2_mean', 'z_composite', 'z_ratio', 'z_sum', 'z_product', 'total_studies', 'study_ratio', 'study_log_ratio', 'log_q_ss', 'log_q_soth', 'q_composite', 'q_max', 'q_min', 'n_studies_ss_abs', 'n_studies_soth_abs', 'dz_ss_mean_abs', 'dz_ss_se_abs', 'dz_ss_ci_low_abs', 'dz_ss_ci_high_abs', 'dz_ss_Q_abs', 'dz_ss_I2_abs', 'dz_ss_z_abs', 'p_ss_abs', 'dz_soth_mean_abs', 'dz_soth_se_abs', 'dz_soth_ci_low_abs', 'dz_soth_ci_high_abs', 'dz_soth_Q_abs', 'dz_soth_I2_abs', 'dz_soth_z_abs', 'p_soth_abs', 'kappa_ss_abs', 'kappa_soth_abs', 'abs_dz_ss_abs', 'abs_dz_soth_abs', 'q_ss_abs', 'q_soth_abs', 'rank_score_abs', 'effect_size_ratio_abs', 'effect_size_diff_abs', 'effect_size_sum_abs', 'effect_size_product_abs', 'log_p_ss_abs', 'log_p_soth_abs', 'p_harmonic_mean_abs', 'ci_ss_width_abs', 'ci_ss_center_abs', 'ci_ss_relative_width_abs', 'ci_soth_width_abs', 'ci_soth_center_abs', 'ci_soth_relative_width_abs', 'i2_ratio_abs', 'i2_max_abs', 'i2_min_abs', 'i2_mean_abs', 'z_composite_abs', 'z_ratio_abs', 'z_sum_abs', 'z_product_abs', 'total_studies_abs', 'study_ratio_abs', 'study_log_ratio_abs', 'log_q_ss_abs', 'log_q_soth_abs', 'q_composite_abs', 'q_max_abs', 'q_min_abs']}}
+2025-09-25 19:29:17,121 - __main__ - INFO - Importing visualization modules...
+2025-09-25 19:29:17,121 - __main__ - INFO - Creating and analyzing data...
+2025-09-25 19:29:17,129 - gene_pair_agent.meta_analysis_processor - INFO - Created sample data with 50 gene pairs
+2025-09-25 19:29:17,129 - gene_pair_agent.feature_engineering - INFO - Initialized FeatureEngineering with n_components=5
+2025-09-25 19:29:17,129 - gene_pair_agent.rules_engine - INFO - Initialized RulesEngine with 5 rules
+2025-09-25 19:29:17,130 - gene_pair_agent.gene_pair_analyzer - INFO - Initialized GenePairAnalyzer with n_features=5, contamination=0.1
+2025-09-25 19:29:17,130 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting GenePairAnalyzer to 50 gene pairs
+2025-09-25 19:29:17,130 - gene_pair_agent.feature_engineering - INFO - Fitting feature engineering pipeline to data with shape (50, 30)
+2025-09-25 19:29:17,130 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:17,182 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:29:17,182 - gene_pair_agent.feature_engineering - INFO - Derived features created: (50, 115)
+2025-09-25 19:29:17,182 - gene_pair_agent.feature_engineering - INFO - Selecting informative features...
+2025-09-25 19:29:17,238 - gene_pair_agent.feature_engineering - INFO - Removed 2 low-variance features
+2025-09-25 19:29:17,238 - gene_pair_agent.feature_engineering - INFO - Selected 108 features after cleaning
+2025-09-25 19:29:17,239 - gene_pair_agent.feature_engineering - INFO - Features selected: (50, 108)
+2025-09-25 19:29:17,251 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Min: -39.864, Max: 179.208
+2025-09-25 19:29:17,266 - gene_pair_agent.feature_engineering - INFO - Feature statistics - Mean: 5.341, Std: 3.969
+2025-09-25 19:29:17,281 - gene_pair_agent.feature_engineering - INFO - Features scaled successfully: (50, 108)
+2025-09-25 19:29:17,282 - gene_pair_agent.feature_engineering - INFO - Scaled features - Min: -63.926, Max: 245.377
+2025-09-25 19:29:17,282 - gene_pair_agent.feature_engineering - INFO - PCA completed: (50, 5)
+2025-09-25 19:29:17,282 - gene_pair_agent.feature_engineering - INFO - Explained variance ratio: [0.96262939 0.01169151 0.01051886 0.00358812 0.00244152]
+2025-09-25 19:29:17,282 - gene_pair_agent.feature_engineering - INFO - Feature engineering fitted: 108 -> 5 components
+2025-09-25 19:29:17,282 - gene_pair_agent.gene_pair_analyzer - INFO - Feature engineering completed: (50, 5)
+2025-09-25 19:29:17,282 - gene_pair_agent.gene_pair_analyzer - INFO - Feature scaling completed: (50, 5)
+2025-09-25 19:29:17,282 - gene_pair_agent.gene_pair_analyzer - INFO - Fitting Isolation Forest...
+2025-09-25 19:29:17,379 - gene_pair_agent.gene_pair_analyzer - INFO - GenePairAnalyzer fitted successfully
+2025-09-25 19:29:17,379 - gene_pair_agent.gene_pair_analyzer - INFO - Analyzing 50 gene pairs
+2025-09-25 19:29:17,379 - gene_pair_agent.feature_engineering - INFO - Transforming data with shape (50, 30)
+2025-09-25 19:29:17,379 - gene_pair_agent.feature_engineering - INFO - Creating derived features...
+2025-09-25 19:29:17,433 - gene_pair_agent.feature_engineering - INFO - Created 85 derived features
+2025-09-25 19:29:17,433 - gene_pair_agent.gene_pair_analyzer - INFO - Features transformed: (50, 5)
+2025-09-25 19:29:17,433 - gene_pair_agent.gene_pair_analyzer - INFO - Features scaled: (50, 5)
+2025-09-25 19:29:17,433 - gene_pair_agent.gene_pair_analyzer - INFO - Running ensemble analysis...
+2025-09-25 19:29:17,433 - gene_pair_agent.gene_pair_analyzer - INFO - Running Isolation Forest...
+2025-09-25 19:29:17,452 - gene_pair_agent.gene_pair_analyzer - INFO - Anomaly detection completed: 5 outliers detected
+2025-09-25 19:29:17,453 - gene_pair_agent.gene_pair_analyzer - INFO - Preparing non-negative features for algorithms that require them...
+2025-09-25 19:29:17,454 - gene_pair_agent.gene_pair_analyzer - INFO - Running DBSCAN clustering...
+2025-09-25 19:29:17,455 - gene_pair_agent.gene_pair_analyzer - INFO - DBSCAN completed: 2 clusters, 4 noise points
+2025-09-25 19:29:17,456 - gene_pair_agent.gene_pair_analyzer - INFO - Running Gaussian Mixture Model...
+2025-09-25 19:29:17,467 - gene_pair_agent.gene_pair_analyzer - INFO - GMM completed: 3 components
+2025-09-25 19:29:17,467 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating clustering quality metrics...
+2025-09-25 19:29:17,467 - gene_pair_agent.gene_pair_analyzer - INFO - Quality metrics - Silhouette: 0.344, Calinski-Harabasz: 9.3
+2025-09-25 19:29:17,467 - gene_pair_agent.gene_pair_analyzer - INFO - Calculating ensemble consensus...
+2025-09-25 19:29:17,496 - gene_pair_agent.rules_engine - INFO - Positive control ('MS4A4A', 'CD86') ranks at 86.0% percentile
+2025-09-25 19:29:17,496 - gene_pair_agent.gene_pair_analyzer - INFO - Analysis completed successfully
+2025-09-25 19:29:17,496 - __main__ - INFO - Creating ChartGenerator...
+2025-09-25 19:29:17,496 - __main__ - INFO - Creating box plot...
+2025-09-25 19:29:17,680 - __main__ - INFO - Creating scatter plot...
+2025-09-25 19:29:17,713 - __main__ - INFO - Creating clustering visualization...
+2025-09-25 19:29:17,794 - __main__ - INFO - Creating ranking chart...
+2025-09-25 19:29:17,814 - __main__ - INFO - Importing config settings...
+2025-09-25 19:29:17,814 - __main__ - INFO - Testing default config...
+2025-09-25 19:29:17,814 - __main__ - INFO - Testing analysis config...
+2025-09-25 19:29:17,814 - __main__ - INFO - Testing web config...
+2025-09-25 19:29:17,814 - __main__ - INFO - Testing database config...
+2025-09-25 19:29:17,814 - __main__ - INFO - Testing config save/load...
+2025-09-25 19:29:17,841 - __main__ - INFO - Creating sample configuration file...

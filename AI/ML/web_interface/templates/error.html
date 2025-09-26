@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Gene Pair ML Analysis{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card text-center">
+                <div class="card-body p-5">
+                    <!-- Error Icon -->
+                    <div class="mb-4">
+                        {% if error_code == 404 %}
+                            <i class="fas fa-search fa-5x text-warning"></i>
+                        {% elif error_code == 500 %}
+                            <i class="fas fa-exclamation-triangle fa-5x text-danger"></i>
+                        {% else %}
+                            <i class="fas fa-times-circle fa-5x text-danger"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Error Code -->
+                    <h1 class="display-1 fw-bold text-muted mb-3">{{ error_code }}</h1>
+                    
+                    <!-- Error Message -->
+                    <h3 class="mb-3">
+                        {% if error_code == 404 %}
+                            Page Not Found
+                        {% elif error_code == 500 %}
+                            Internal Server Error
+                        {% else %}
+                            An Error Occurred
+                        {% endif %}
+                    </h3>
+                    
+                    <p class="text-muted mb-4">
+                        {{ error_message }}
+                    </p>
+                    
+                    <!-- Additional Information -->
+                    {% if error_code == 404 %}
+                        <p class="text-muted mb-4">
+                            The page you're looking for might have been moved, renamed, or temporarily unavailable.
+                        </p>
+                    {% elif error_code == 500 %}
+                        <p class="text-muted mb-4">
+                            Something went wrong on our end. Please try again later or contact support if the problem persists.
+                        </p>
+                    {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">
+                            <i class="fas fa-home me-1"></i>Go Home
+                        </a>
+                        <button class="btn btn-secondary" onclick="window.history.back()">
+                            <i class="fas fa-arrow-left me-1"></i>Go Back
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="location.reload()">
+                            <i class="fas fa-sync-alt me-1"></i>Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="row mt-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-life-ring me-2"></i>
+                        Need Help?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <i class="fas fa-book fa-2x text-primary"></i>
+                            </div>
+                            <h6>Documentation</h6>
+                            <p class="small text-muted">
+                                Check our comprehensive user guide and troubleshooting tips.
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <i class="fas fa-bug fa-2x text-warning"></i>
+                            </div>
+                            <h6>Report Issue</h6>
+                            <p class="small text-muted">
+                                Let us know about technical problems or unexpected behavior.
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-2">
+                                <i class="fas fa-comments fa-2x text-success"></i>
+                            </div>
+                            <h6>Contact Support</h6>
+                            <p class="small text-muted">
+                                Get help from our technical support team.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Details (for debugging) -->
+    {% if config.DEBUG %}
+    <div class="row mt-4">
+        <div class="col-lg-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-code me-2"></i>
+                        Debug Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Debug Mode:</strong> This information is only visible in development mode.
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Request Information:</h6>
+                            <ul class="list-unstyled small">
+                                <li><strong>Method:</strong> {{ request.method }}</li>
+                                <li><strong>URL:</strong> {{ request.url }}</li>
+                                <li><strong>Endpoint:</strong> {{ request.endpoint }}</li>
+                                <li><strong>Remote IP:</strong> {{ request.remote_addr }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>System Information:</h6>
+                            <ul class="list-unstyled small">
+                                <li><strong>Timestamp:</strong> {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</li>
+                                <li><strong>Python Version:</strong> {{ python_version }}</li>
+                                <li><strong>Flask Version:</strong> {{ flask_version }}</li>
+                                <li><strong>Platform:</strong> {{ platform }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-redirect to home page after 30 seconds
+let countdown = 30;
+const countdownElement = document.createElement('div');
+countdownElement.className = 'alert alert-info mt-3';
+countdownElement.innerHTML = `
+    <i class="fas fa-clock me-2"></i>
+    <span>Redirecting to home page in <strong id="countdown">${countdown}</strong> seconds...</span>
+`;
+
+document.querySelector('.card-body').appendChild(countdownElement);
+
+const countdownInterval = setInterval(() => {
+    countdown--;
+    document.getElementById('countdown').textContent = countdown;
+    
+    if (countdown <= 0) {
+        clearInterval(countdownInterval);
+        window.location.href = '{{ url_for('index') }}';
+    }
+}, 1000);
+
+// Allow user to cancel auto-redirect
+countdownElement.innerHTML += `
+    <button class="btn btn-sm btn-outline-primary ms-2" onclick="cancelRedirect()">
+        Cancel
+    </button>
+`;
+
+function cancelRedirect() {
+    clearInterval(countdownInterval);
+    countdownElement.style.display = 'none';
+}
+</script>
+{% endblock %}
