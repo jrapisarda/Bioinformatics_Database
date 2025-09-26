@@ -8,7 +8,7 @@ from scipy.stats import norm
 import logging
 
 # Set up basic logging configuration
-logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 # Additional imports for logging and unsupervised learning
 
@@ -138,16 +138,9 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
     df = df.copy()
     df["group"] = df["illness_label"].map(inv)
 
-    # ==== inside compute_metrics(), immediately after df["group"] = ... ====
-    print("\n1️⃣ LABEL MAP SANITY CHECK")
-    print("  Raw illness_label values :", sorted(df["illness_label"].dropna().unique()))
-    print("  group col NaN count      :", df["group"].isna().sum())
-    print("  head of illness_label → group:\n", df[["illness_label", "group"]].head())
-
-    print("Unique illness_label raw values:", sorted(df["illness_label"].dropna().unique()))
-    print("Mapping dict inv:", inv)
-    print("Group col after map (head):\n", df[["illness_label", "group"]].head())
-    print("NaN count in group:", df["group"].isna().sum())
+    logger.debug("Label map applied. Unique illness labels: %s", sorted(df["illness_label"].dropna().unique()))
+    logger.debug("Group column NaN count: %s", df["group"].isna().sum())
+    logger.debug("Illness label → group head:\n%s", df[["illness_label", "group"]].head())
 
     # compute Fisher z and keep counts per study/group
     df["z"] = df["rho_spearman"].apply(fisher_z)
@@ -159,18 +152,40 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
                          values=["z", "n_eff"],
                          aggfunc="first")
     
-    # ==== right after pvt = df.pivot_table(...) ====
-    print("\n2️⃣ PIVOT RESULT")
-    print("  Pivot shape (study×pair, groups×vars) :", pvt.shape)
-    print("  Pivot column index :", pvt.columns.tolist())
-    print("  Missing-value rate per column:\n", pvt.isna().mean().round(2))
+    logger.debug("Pivot result shape: %s", pvt.shape)
+    logger.debug("Pivot columns: %s", pvt.columns.tolist())
+    logger.debug("Pivot missing-value rate:\n%s", pvt.isna().mean().round(2))
 
-    # Helper to get column safely
+    groups = ["septic shock", "sepsis", "control"]
+    for root in ("z", "n_eff"):
+        for grp in groups:
+            if (root, grp) not in pvt.columns:
+                pvt[(root, grp)] = np.nan
+    pvt = pvt.sort_index(axis=1)
+
+    # Apply option C: if exactly one group is missing but the other two exist, impute with zeros
+    z_frame = pvt["z"].copy()
+    available_counts = z_frame.notna().sum(axis=1)
+    missing_counts = z_frame.isna().sum(axis=1)
+    mask_impute = (available_counts >= 2) & (missing_counts == 1)
+    impute_counter = {grp: 0 for grp in groups}
+    for idx in z_frame[mask_impute].index:
+        missing_grp = z_frame.columns[z_frame.loc[idx].isna()][0]
+        pvt.loc[idx, ("z", missing_grp)] = 0.0
+        pvt.loc[idx, ("n_eff", missing_grp)] = 0.0
+        impute_counter[missing_grp] += 1
+    if any(impute_counter.values()):
+        logger.debug("Imputed missing groups with zeros: %s", impute_counter)
+    else:
+        logger.debug("No rows required group-level imputation")
+
+    # Helper to get column safely and fill missing with zeros
     def col(mat, root, grp):
         try:
-            return mat[(root, grp)]
+            series = mat[(root, grp)]
         except KeyError:
-            return pd.Series(index=mat.index, dtype="float64")
+            series = pd.Series(index=mat.index, dtype="float64")
+        return series.fillna(0.0)
 
     z_shock   = col(pvt, "z", "septic shock")
     z_sepsis  = col(pvt, "z", "sepsis")
@@ -179,16 +194,28 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
     ne_sepsis = col(pvt, "n_eff", "sepsis")
     ne_ctrl   = col(pvt, "n_eff", "control")
 
+    def safe_inverse(series: pd.Series) -> pd.Series:
+        values = series.to_numpy(dtype=float, copy=True)
+        result = np.zeros_like(values)
+        valid = np.isfinite(values) & (values > 0)
+        result[valid] = 1.0 / values[valid]
+        return pd.Series(result, index=series.index)
+
     # Per-study deltas & SEs
     dz_ss   = z_shock - z_sepsis
-    se_ss   = np.sqrt(1.0 / ne_shock + 1.0 / ne_sepsis)
+    inv_shock = safe_inverse(ne_shock)
+    inv_sepsis = safe_inverse(ne_sepsis)
+    se_ss   = np.sqrt(inv_shock + inv_sepsis)
 
-    w_ctrl  = ne_ctrl.fillna(0.0)
-    w_seps  = ne_sepsis.fillna(0.0)
-    z_others = (w_ctrl * z_ctrl.fillna(0.0) + w_seps * z_sepsis.fillna(0.0)) / (w_ctrl + w_seps).replace(0, np.nan)
-    var_others = 1.0 / (w_ctrl + w_seps)
+    w_ctrl  = ne_ctrl
+    w_seps  = ne_sepsis
+    numerator = (w_ctrl * z_ctrl) + (w_seps * z_sepsis)
+    total_w = w_ctrl + w_seps
+    total_w_nonzero = total_w.replace(0, np.nan)
+    z_others = numerator.divide(total_w_nonzero).fillna(0.0)
+    var_others = (1.0 / total_w_nonzero).replace([np.inf, -np.inf], 0.0).fillna(0.0)
+    se_soth = np.sqrt(inv_shock + var_others)
     dz_soth = z_shock - z_others
-    se_soth = np.sqrt(1.0 / ne_shock + var_others)
 
     # Drop rows with any NaNs in effect or SE
     per_study = pd.DataFrame({
@@ -198,25 +225,37 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
         "dz_soth": dz_soth.values, "se_soth": se_soth.values
     })
 
-    # ==== right after per_study = pd.DataFrame({...}) ====
-    print("\n3️⃣ PER-STUDY DELTAS")
-    print("  per_study shape :", per_study.shape)
-    print("  per_study head:\n", per_study.head())
-    print("  NaN per column  :\n", per_study.isna().sum())
+    logger.debug("Per-study deltas shape: %s", per_study.shape)
+    logger.debug("Per-study head:\n%s", per_study.head())
+    logger.debug("Per-study NaN counts:\n%s", per_study.isna().sum())
 
-    print("Before dropna:")
-    print("  dz_ss NaN   :", dz_ss.isna().sum())
-    print("  se_ss NaN   :", se_ss.isna().sum())
-    print("  dz_soth NaN :", dz_soth.isna().sum())
-    print("  se_soth NaN :", se_soth.isna().sum())
-    # ---- 3️⃣-bis  “why is it NaN?” ----
-    print("\n3️⃣-bis  MISSING-COMPONENT CHECK")
-    for col, vec in (("z_shock", z_shock), ("z_sepsis", z_sepsis), ("z_ctrl", z_ctrl),
-                 ("ne_shock", ne_shock), ("ne_sepsis", ne_sepsis), ("ne_ctrl", ne_ctrl)):
-        print(f"  {col:10}  NaN : {vec.isna().sum():5}   ({vec.isna().mean():.1%})")
+    logger.debug(
+        "NaNs before dropna - dz_ss: %s, se_ss: %s, dz_soth: %s, se_soth: %s",
+        dz_ss.isna().sum(),
+        se_ss.isna().sum(),
+        dz_soth.isna().sum(),
+        se_soth.isna().sum(),
+    )
+    for col, vec in (
+        ("z_shock", z_shock),
+        ("z_sepsis", z_sepsis),
+        ("z_ctrl", z_ctrl),
+        ("ne_shock", ne_shock),
+        ("ne_sepsis", ne_sepsis),
+        ("ne_ctrl", ne_ctrl),
+    ):
+        logger.debug("Missing count for %s: %s (%.1f%%)", col, vec.isna().sum(), vec.isna().mean() * 100)
 
 
-    per_study = per_study.replace([np.inf, -np.inf], np.nan).dropna(subset=["dz_ss", "se_ss", "dz_soth", "se_soth"], how="all")
+    before_drop = len(per_study)
+    per_study = per_study.replace([np.inf, -np.inf], np.nan).dropna(
+        subset=["dz_ss", "se_ss", "dz_soth", "se_soth"], how="all"
+    )
+    logger.debug(
+        "Per-study rows retained after drop: %s (dropped %s)",
+        len(per_study),
+        before_drop - len(per_study),
+    )
 
     # Aggregate by pair_id via random-effects meta
     rows = []
@@ -444,9 +483,9 @@ def compute_metrics(df: pd.DataFrame, labels: dict) -> pd.DataFrame:
     if "p_soth" in met:
         met["q_soth"] = bh_fdr(met["p_soth"].values)
     
-    print("Rows collected:", len(rows))
-    print("DataFrame shape:", met.shape)
-    print("Columns:", met.columns.tolist())
+    logger.debug("Rows collected: %s", len(rows))
+    logger.debug("Meta DataFrame shape: %s", met.shape)
+    logger.debug("Meta DataFrame columns: %s", met.columns.tolist())
 
     # Rank: stronger Δz_ss with low q_ss first; tiebreaker Δz_soth
     # (You can plug in your composite score here)
@@ -484,20 +523,32 @@ def compute_unsupervised_rank_scores(met: pd.DataFrame) -> pd.DataFrame:
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X_imputed)
 
-    # Compute anomaly scores using multiple unsupervised methods
-    # Isolation Forest
-    iso = IsolationForest(contamination=0.05, random_state=42)
-    iso_anomaly = -iso.fit(X_scaled).score_samples(X_scaled)
-    # Local Outlier Factor
-    lof = LocalOutlierFactor(n_neighbors=20, contamination=0.05)
-    # Fit LOF on the scaled data; negative_outlier_factor_ is available after fit
-    lof.fit(X_scaled)
-    lof_scores = -lof.negative_outlier_factor_
-    # KMeans distances to cluster centroids
-    kmeans = KMeans(n_clusters=5, random_state=42, n_init=10)
-    labels = kmeans.fit_predict(X_scaled)
-    centers = kmeans.cluster_centers_
-    distances = np.linalg.norm(X_scaled - centers[labels], axis=1)
+    n_samples = X_scaled.shape[0]
+    if n_samples < 2:
+        logger.debug(
+            "Insufficient samples (%s) for full unsupervised scoring; defaulting anomaly scores to zeros",
+            n_samples,
+        )
+        iso_anomaly = np.zeros(n_samples, dtype=float)
+        lof_scores = np.zeros(n_samples, dtype=float)
+        distances = np.zeros(n_samples, dtype=float)
+    else:
+        # Compute anomaly scores using multiple unsupervised methods
+        # Isolation Forest
+        iso = IsolationForest(contamination=0.05, random_state=42)
+        iso_anomaly = -iso.fit(X_scaled).score_samples(X_scaled)
+        # Local Outlier Factor
+        n_neighbors = min(20, n_samples - 1)
+        lof = LocalOutlierFactor(n_neighbors=n_neighbors, contamination=0.05)
+        # Fit LOF on the scaled data; negative_outlier_factor_ is available after fit
+        lof.fit(X_scaled)
+        lof_scores = -lof.negative_outlier_factor_
+        # KMeans distances to cluster centroids
+        n_clusters = min(5, n_samples)
+        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
+        labels = kmeans.fit_predict(X_scaled)
+        centers = kmeans.cluster_centers_
+        distances = np.linalg.norm(X_scaled - centers[labels], axis=1)
 
     # Helper for min-max normalisation
     def _minmax(arr: np.ndarray) -> np.ndarray:
@@ -590,7 +641,17 @@ def main():
     met = met.merge(name_cols, on="pair_id", how="left")
     logger.info("Merged gene names")
 
-    # 4) Compute unsupervised ranking and append scores
+    # 4) Prepare numeric columns for unsupervised learning
+    numeric_cols = met.select_dtypes(include=[np.number]).columns.tolist()
+    if numeric_cols:
+        nan_counts = met[numeric_cols].isna().sum().sum()
+        if nan_counts:
+            logger.debug("Filling %s NaN values across numeric columns before unsupervised scoring", nan_counts)
+        met[numeric_cols] = met[numeric_cols].fillna(0.0)
+    else:
+        logger.debug("No numeric columns detected prior to unsupervised scoring")
+
+    # 5) Compute unsupervised ranking and append scores
     logger.info("Computing unsupervised rank scores...")
     met = compute_unsupervised_rank_scores(met)
     logger.info("Unsupervised scores computed")
