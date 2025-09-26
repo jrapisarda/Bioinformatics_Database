@@ -105,7 +105,7 @@ SELECT
   rho_spearman, p_value, q_value, n_samples,
   study_key,
   GeneAName, GeneBName, GeneAKey, GeneBKey
-FROM dbo.vw_gene_DE_fact_corr_data
+FROM dbo.vw_gene_DE_fact_corr_data WHERE geneA_ss_direction <> geneB_ss_direction
 """)
 
 
