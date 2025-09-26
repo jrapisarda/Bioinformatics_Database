@@ -19,7 +19,10 @@ from typing import Dict, Any, Optional
 sys.path.insert(0, str(Path(__file__).parent))
 
 from gene_pair_agent import GenePairAnalyzer, RulesEngine, MetaAnalysisProcessor, DatabaseConnector
-from visualization import ChartGenerator
+try:  # Optional dependency for visualization exports
+    from visualization import ResultsDashboard
+except ImportError:  # pragma: no cover - allow headless operation without Plotly
+    ResultsDashboard = None  # type: ignore[assignment]
 
 def setup_logging(verbose: bool = False) -> None:
     """Configure logging for the application."""
@@ -43,7 +46,12 @@ def load_config(config_path: str) -> Dict[str, Any]:
         logging.error(f"Failed to load config from {config_path}: {e}")
         sys.exit(1)
 
-def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[str, Any]] = None) -> None:
+def run_file_analysis(
+    file_path: str,
+    output_path: str,
+    config: Optional[Dict[str, Any]] = None,
+    dashboard_path: Optional[str] = None
+) -> None:
     """Run analysis on file-based data."""
     logger = logging.getLogger(__name__)
     
@@ -80,12 +88,15 @@ def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[st
         analyzer.fit(prepared_data)
         results = analyzer.predict(prepared_data)
         
-        # Generate visualizations
-        chart_gen = ChartGenerator()
-        dashboard = chart_gen.create_summary_dashboard(results)
-        
         # Save results
         analyzer.save_results(output_path)
+
+        if dashboard_path:
+            _generate_dashboard_report(
+                analyzer=analyzer,
+                prepared_data=prepared_data,
+                dashboard_path=dashboard_path
+            )
         
         # Print summary
         summary = analyzer.get_analysis_summary()
@@ -103,7 +114,11 @@ def run_file_analysis(file_path: str, output_path: str, config: Optional[Dict[st
         logger.error(f"Analysis failed: {e}")
         sys.exit(1)
 
-def run_database_analysis(config: Dict[str, Any], output_path: str) -> None:
+def run_database_analysis(
+    config: Dict[str, Any],
+    output_path: str,
+    dashboard_path: Optional[str] = None
+) -> None:
     """Run analysis on database data."""
     logger = logging.getLogger(__name__)
     
@@ -152,6 +167,13 @@ def run_database_analysis(config: Dict[str, Any], output_path: str) -> None:
         
         # Save results
         analyzer.save_results(output_path)
+
+        if dashboard_path:
+            _generate_dashboard_report(
+                analyzer=analyzer,
+                prepared_data=prepared_data,
+                dashboard_path=dashboard_path
+            )
         
         logger.info("Database analysis completed successfully!")
         
@@ -181,6 +203,45 @@ def create_sample_data(output_path: str, n_pairs: int = 100) -> None:
         logger.error(f"Failed to create sample data: {e}")
         sys.exit(1)
 
+def _generate_dashboard_report(
+    analyzer: GenePairAnalyzer,
+    prepared_data,
+    dashboard_path: str
+) -> None:
+    """Create and persist a comprehensive HTML dashboard report."""
+    logger = logging.getLogger(__name__)
+
+    if ResultsDashboard is None:
+        logger.warning(
+            "Dashboard generation skipped: visualization dependencies are not installed."
+        )
+        return
+
+    try:
+        results_dashboard = ResultsDashboard()
+    except ImportError as exc:
+        logger.warning(
+            "Dashboard generation skipped: optional visualization dependencies are missing (%s)",
+            exc
+        )
+        return
+    except Exception as exc:  # pragma: no cover - defensive guard
+        logger.error(f"Failed to initialize ResultsDashboard: {exc}")
+        return
+
+    try:
+        session_id = Path(dashboard_path).stem or 'gene_pair_analysis'
+        dashboard_payload = results_dashboard.create_comprehensive_dashboard(
+            analysis_results=analyzer.analysis_results,
+            original_data=prepared_data,
+            session_id=session_id
+        )
+        results_dashboard.generate_report(dashboard_payload, dashboard_path, format='html')
+        logger.info(f"Dashboard report saved to {dashboard_path}")
+    except Exception as exc:
+        logger.error(f"Failed to generate dashboard report: {exc}")
+
+
 def main():
     """Main function to handle command-line arguments and run analysis."""
     parser = argparse.ArgumentParser(
@@ -195,6 +256,15 @@ def main():
     
     # Output options
     parser.add_argument('--output', '-o', required=True, help='Output file path')
+    parser.add_argument(
+        '--dashboard-html',
+        nargs='?',
+        const='',
+        help=(
+            'Generate an interactive HTML dashboard. Optionally provide a path; '
+            'if omitted, the report is saved alongside the main output with a .html extension.'
+        )
+    )
     parser.add_argument('--config', '-c', help='Configuration file path (JSON)')
     
     # Analysis parameters
@@ -226,22 +296,46 @@ def main():
             'contamination': args.contamination
         }
     
+    output_path = Path(args.output)
+    dashboard_path: Optional[str] = None
+    results_output_path = output_path
+
+    if args.dashboard_html is not None:
+        if args.dashboard_html:
+            dashboard_path = args.dashboard_html
+        else:
+            dashboard_path = str(output_path.with_suffix('.html'))
+
+    if results_output_path.suffix.lower() == '.html':
+        if dashboard_path is None:
+            dashboard_path = str(results_output_path)
+        new_results_path = results_output_path.with_suffix('.json')
+        logger.info(
+            "HTML output requested; analysis results will be saved to %s and the dashboard to %s",
+            new_results_path,
+            dashboard_path
+        )
+        results_output_path = new_results_path
+
+    # Ensure results output path is a string for downstream functions
+    results_output_path_str = str(results_output_path)
+
     # Run appropriate analysis
     if args.sample:
         logger.info("Creating sample data...")
-        create_sample_data(args.output, args.n_pairs)
-        
+        create_sample_data(results_output_path_str, args.n_pairs)
+
     elif args.file:
         logger.info(f"Running file analysis on: {args.file}")
-        run_file_analysis(args.file, args.output, config)
-        
+        run_file_analysis(args.file, results_output_path_str, config, dashboard_path)
+
     elif args.database:
         if not args.config:
             logger.error("Database analysis requires a configuration file")
             sys.exit(1)
-        
+
         logger.info("Running database analysis...")
-        run_database_analysis(config, args.output)
+        run_database_analysis(config, results_output_path_str, dashboard_path)
     
     logger.info("Process completed successfully!")
 

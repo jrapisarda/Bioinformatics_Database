@@ -107,6 +107,12 @@ python main.py --file sample_data.xlsx --output results.json
 # Run analysis on file
 python main.py --file data.xlsx --output results.json
 
+# Run analysis and generate an offline HTML dashboard alongside JSON results
+python main.py --file data.xlsx --output results.json --dashboard-html
+
+# Explicitly set the dashboard location
+python main.py --file data.xlsx --output results.json --dashboard-html reports/my_run.html
+
 # Create sample data
 python main.py --sample --output sample_data.csv --n-pairs 100
 
@@ -116,6 +122,13 @@ python main.py --file data.xlsx --config config.json --output results.json
 # Run database analysis
 python main.py --database --config db_config.json --output results.json
 ```
+
+When the `--dashboard-html` flag is present, the CLI renders the comprehensive Plotly dashboard defined in
+`visualization/results_dashboard.py`. By default the report is stored next to the requested output file with a `.html`
+extension and embeds the Plotly JSON payload for each chart, so the dashboard can be opened locally without starting the
+Flask web application or requiring network access beyond the Plotly CDN script include. Providing an explicit path allows the
+report to be written to any desired directory. Alternatively, setting `--output` to a `.html` path automatically generates the
+dashboard at that location while writing the structured JSON export beside it using the same filename stem.
 
 ### Web Interface
 
