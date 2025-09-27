@@ -77,4 +77,4 @@ def test_create_scatter_plot_returns_empty_chart_with_no_finite_values():
     chart = ChartGenerator().create_scatter_plot(data, {})
 
     assert chart['layout']['title']['text'] == 'Chart Unavailable'
-    assert chart['layout']['annotations'][0]['text'] == 'Scatter plot requires finite effect size values'
+    assert chart['layout']['annotations'][0]['text'] == 'No paired effect sizes'
