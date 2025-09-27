@@ -161,14 +161,43 @@ app.run(debug=True, host='0.0.0.0', port=5000)
 ## 📋 Data Requirements
 
 ### Required Columns
-- `pair_id`: Unique identifier
-- `GeneAName`, `GeneBName`: Gene symbols
-- `dz_ss_mean`, `dz_soth_mean`: Effect sizes
-- `p_ss`, `p_soth`: P-values
-- `q_ss`, `q_soth`: FDR-adjusted p-values
+Uploads must include each of the following fields. Column names are matched case-insensitively, and common legacy aliases (for example, `Gene_A` or `PairID`) are automatically mapped to the canonical names shown here:
+
+- `pair_id`
+- `n_studies_ss`
+- `n_studies_soth`
+- `dz_ss_mean`
+- `dz_ss_se`
+- `dz_ss_ci_low`
+- `dz_ss_ci_high`
+- `dz_ss_Q`
+- `dz_ss_I2`
+- `dz_ss_z`
+- `p_ss`
+- `dz_soth_mean`
+- `dz_soth_se`
+- `dz_soth_ci_low`
+- `dz_soth_ci_high`
+- `dz_soth_Q`
+- `dz_soth_I2`
+- `dz_soth_z`
+- `p_soth`
+- `kappa_ss`
+- `kappa_soth`
+- `abs_dz_ss`
+- `abs_dz_soth`
+- `q_ss`
+- `q_soth`
+- `rank_score`
+- `GeneAName`
+- `GeneBName`
+- `GeneAKey`
+- `GeneBKey`
 
 ### Optional Columns
-- Study metadata, confidence intervals, heterogeneity measures
+- `study_key`
+- `illness_label`
+- `rho_spearman`
 
 ## 🔒 Security Considerations
 
