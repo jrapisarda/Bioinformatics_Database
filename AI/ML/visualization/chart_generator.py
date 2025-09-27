@@ -184,7 +184,7 @@ class ChartGenerator:
     
     def create_clustering_viz(self, results: Dict[str, Any]) -> Dict[str, Any]:
         """Create clustering visualization."""
-        
+
         if 'ensemble_analysis' not in results:
             return self._empty_chart("Clustering visualization requires analysis results")
         
@@ -253,12 +253,76 @@ class ChartGenerator:
             height=600,
             showlegend=False
         )
-        
+
         return json.loads(fig.to_json())
-    
+
+    def create_rho_spearman_boxplot(
+        self,
+        data: pd.DataFrame,
+        gene_pair: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """Create a combined box/violin plot for rho_spearman values."""
+
+        if 'rho_spearman' not in data.columns:
+            logger.warning("rho_spearman column missing for distribution chart")
+            return self._empty_chart("rho_spearman values are required for this chart")
+
+        rho_values = pd.to_numeric(data['rho_spearman'], errors='coerce')
+        rho_values = rho_values[np.isfinite(rho_values)]
+
+        if rho_values.empty:
+            return self._empty_chart("No rho_spearman values available")
+
+        fig = go.Figure()
+
+        fig.add_trace(
+            go.Violin(
+                y=rho_values,
+                name='Distribution',
+                box_visible=True,
+                meanline_visible=True,
+                fillcolor=self.color_palette['success'],
+                opacity=0.5
+            )
+        )
+
+        fig.add_trace(
+            go.Box(
+                y=rho_values,
+                name='Summary',
+                marker_color=self.color_palette['primary'],
+                boxpoints='outliers'
+            )
+        )
+
+        title_suffix = f" for {gene_pair}" if gene_pair else ""
+
+        fig.update_layout(
+            title={
+                'text': f"Spearman Correlation Distribution{title_suffix}",
+                'x': 0.5,
+                'font': {'size': 16, 'family': 'Georgia, serif'}
+            },
+            xaxis_title='',
+            yaxis_title='rho (Spearman)',
+            showlegend=False,
+            **self.default_layout
+        )
+
+        fig.add_annotation(
+            text="Violin shows density; box highlights quartiles and median.",
+            xref="paper", yref="paper",
+            x=0.02, y=0.98,
+            xanchor="left", yanchor="top",
+            showarrow=False,
+            font=dict(size=10, color="gray")
+        )
+
+        return json.loads(fig.to_json())
+
     def create_ranking_chart(self, results: Dict[str, Any]) -> Dict[str, Any]:
         """Create ranking visualization."""
-        
+
         if 'recommendations' not in results:
             return self._empty_chart("Ranking chart requires recommendations")
         

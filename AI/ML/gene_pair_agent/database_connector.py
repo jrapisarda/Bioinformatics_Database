@@ -190,25 +190,92 @@ class DatabaseConnector:
         """Execute a SQL query and return results as DataFrame."""
         if not self.connect():
             raise ConnectionError("Cannot connect to database")
-        
+
         try:
             with self.engine.connect() as conn:
                 if params:
                     result = conn.execute(text(query), params)
                 else:
                     result = conn.execute(text(query))
-                
+
                 # Convert to DataFrame
                 df = pd.DataFrame(result.fetchall(), columns=result.keys())
-                
+
             logger.info(f"Query executed successfully. Returned {len(df)} rows")
             return df
-            
+
         except SQLAlchemyError as e:
             logger.error(f"Database query error: {e}")
             raise
         except Exception as e:
             logger.error(f"Unexpected error executing query: {e}")
+            raise
+
+    def get_rho_spearman_distribution(
+        self,
+        gene_a: str,
+        gene_b: str,
+        limit: Optional[int] = None
+    ) -> pd.DataFrame:
+        """Return rho_spearman values for a gene pair across all studies.
+
+        The query pulls correlations for the requested pair in either
+        orientation (A/B or B/A) and optionally limits the number of rows
+        returned. Results are ordered by correlation value so that callers can
+        easily visualise the distribution.
+        """
+
+        if not gene_a or not gene_b:
+            raise ValueError("Both gene_a and gene_b must be provided")
+
+        params = {
+            'gene_a': gene_a,
+            'gene_b': gene_b
+        }
+
+        if limit is not None:
+            if limit <= 0:
+                raise ValueError("limit must be a positive integer when provided")
+            params['limit'] = int(limit)
+            query = text(
+                """
+                SELECT rho_spearman
+                FROM dbo.vw_gene_DE_fact_corr_data
+                WHERE (GeneAName = :gene_a AND GeneBName = :gene_b)
+                   OR (GeneAName = :gene_b AND GeneBName = :gene_a)
+                ORDER BY rho_spearman
+                OFFSET 0 ROWS FETCH NEXT :limit ROWS ONLY
+                """
+            )
+        else:
+            query = text(
+                """
+                SELECT rho_spearman
+                FROM dbo.vw_gene_DE_fact_corr_data
+                WHERE (GeneAName = :gene_a AND GeneBName = :gene_b)
+                   OR (GeneAName = :gene_b AND GeneBName = :gene_a)
+                ORDER BY rho_spearman
+                """
+            )
+
+        if not self.connect():
+            raise ConnectionError("Cannot connect to database")
+
+        try:
+            with self.engine.connect() as conn:
+                result = conn.execute(query, params)
+                df = pd.DataFrame(result.fetchall(), columns=result.keys())
+
+            logger.info(
+                "Fetched %d rho_spearman values for gene pair %s/%s",
+                len(df),
+                gene_a,
+                gene_b
+            )
+            return df
+
+        except SQLAlchemyError as exc:
+            logger.error("Error retrieving rho_spearman distribution: %s", exc)
             raise
     
     def get_gene_pair_data(self, 
