@@ -476,6 +476,8 @@ def get_visualization(session_id, chart_type):
             chart = chart_gen.create_boxplot(data, results)
         elif chart_type == 'scatter':
             chart = chart_gen.create_scatter_plot(data, results)
+        elif chart_type == 'rho_spearman_distribution':
+            chart = chart_gen.create_rho_spearman_boxplot(data, results)
         elif chart_type == 'clustering':
             chart = chart_gen.create_clustering_viz(results)
         elif chart_type == 'ranking':

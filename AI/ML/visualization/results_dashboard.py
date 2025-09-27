@@ -103,7 +103,11 @@ class ResultsDashboard:
             # Scatter plot
             scatter_chart = self.chart_generator.create_scatter_plot(data, analysis_results)
             visualizations['scatter'] = scatter_chart
-            
+
+            if 'rho_spearman' in data.columns:
+                rho_chart = self.chart_generator.create_rho_spearman_boxplot(data)
+                visualizations['rho_spearman'] = rho_chart
+
             # Clustering visualization
             clustering_chart = self.chart_generator.create_clustering_viz(analysis_results)
             visualizations['clustering'] = clustering_chart
@@ -222,6 +226,11 @@ class ResultsDashboard:
                     <h3>Gene Pair Correlation</h3>
                     <div id="scatter-chart"></div>
                 </div>
+
+                <div class="chart-container">
+                    <h3>Spearman Correlation Distribution</h3>
+                    <div id="rho-spearman-chart"></div>
+                </div>
             </div>
 
             <div id="gene-detail-modal" class="modal fade" tabindex="-1" aria-labelledby="geneDetailModalLabel" aria-hidden="true">
@@ -270,6 +279,7 @@ class ResultsDashboard:
                 // Embed Plotly charts
                 const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {}))};
                 const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {}))};
+                const rhoSpearmanData = {json.dumps(dashboard['visualizations'].get('rho_spearman', {}))};
 
                 if (boxplotData.data) {{
                     Plotly.newPlot('boxplot-chart', boxplotData.data, boxplotData.layout);
@@ -277,6 +287,10 @@ class ResultsDashboard:
 
                 if (scatterData.data) {{
                     Plotly.newPlot('scatter-chart', scatterData.data, scatterData.layout);
+                }}
+
+                if (rhoSpearmanData.data) {{
+                    Plotly.newPlot('rho-spearman-chart', rhoSpearmanData.data, rhoSpearmanData.layout);
                 }}
 
                 function getRecommendations() {{
