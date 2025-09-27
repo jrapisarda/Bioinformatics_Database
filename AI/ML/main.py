@@ -49,6 +49,7 @@ def run_file_analysis(
     output_path: str,
     config: Optional[Dict[str, Any]] = None,
     dashboard_html: Optional[str] = None,
+    top_n: int = 20,
 ) -> None:
     """Run analysis on file-based data."""
     logger = logging.getLogger(__name__)
@@ -86,6 +87,10 @@ def run_file_analysis(
         analyzer.fit(prepared_data)
         results = analyzer.predict(prepared_data)
 
+        if top_n <= 0:
+            logger.warning("Received non-positive top_n; defaulting to 20")
+            top_n = 20
+
         if dashboard_html:
             dashboard = ResultsDashboard()
             session_id = uuid.uuid4().hex
@@ -93,6 +98,7 @@ def run_file_analysis(
                 results,
                 prepared_data,
                 session_id,
+                top_n=top_n,
             )
             dashboard_output = dashboard.generate_report(
                 dashboard_data,
@@ -117,8 +123,9 @@ def run_file_analysis(
         
         # Print top recommendations
         if results.get('recommendations'):
-            logger.info("\nTop 10 Recommendations:")
-            for i, rec in enumerate(results['recommendations'][:10]):
+            display_count = min(top_n, len(results['recommendations']))
+            logger.info(f"\nTop {display_count} Recommendations:")
+            for i, rec in enumerate(results['recommendations'][:display_count]):
                 logger.info(f"{i+1:2d}. {rec['gene_a']}-{rec['gene_b']} (Score: {rec['combined_score']:.3f})")
         
     except Exception as e:
@@ -129,6 +136,7 @@ def run_database_analysis(
     config: Dict[str, Any],
     output_path: str,
     dashboard_html: Optional[str] = None,
+    top_n: int = 20,
 ) -> None:
     """Run analysis on database data."""
     logger = logging.getLogger(__name__)
@@ -176,6 +184,10 @@ def run_database_analysis(
         analyzer.fit(prepared_data)
         results = analyzer.predict(prepared_data)
 
+        if top_n <= 0:
+            logger.warning("Received non-positive top_n; defaulting to 20")
+            top_n = 20
+
         if dashboard_html:
             dashboard = ResultsDashboard()
             session_id = uuid.uuid4().hex
@@ -183,6 +195,7 @@ def run_database_analysis(
                 results,
                 data,
                 session_id,
+                top_n=top_n,
             )
             dashboard_output = dashboard.generate_report(
                 dashboard_data,
@@ -258,6 +271,7 @@ def main():
     parser.add_argument('--n-features', type=int, default=5, help='Number of PCA features (default: 5)')
     parser.add_argument('--contamination', type=float, default=0.1, help='Outlier contamination rate (default: 0.1)')
     parser.add_argument('--n-pairs', type=int, default=100, help='Number of sample pairs (default: 100)')
+    parser.add_argument('--top-n', type=int, default=20, help='Number of top recommendations to include in dashboards (default: 20)')
     
     # Logging
     parser.add_argument('--verbose', '-v', action='store_true', help='Enable verbose logging')
@@ -277,10 +291,12 @@ def main():
             config['n_features'] = args.n_features
         if args.contamination:
             config['contamination'] = args.contamination
+        config['top_n'] = args.top_n
     else:
         config = {
             'n_features': args.n_features,
-            'contamination': args.contamination
+            'contamination': args.contamination,
+            'top_n': args.top_n
         }
     
     dashboard_path: Optional[Path] = None
@@ -308,6 +324,7 @@ def main():
             args.output,
             config,
             str(dashboard_path) if dashboard_path else None,
+            top_n=args.top_n,
         )
 
     elif args.database:
@@ -320,6 +337,7 @@ def main():
             config,
             args.output,
             str(dashboard_path) if dashboard_path else None,
+            top_n=args.top_n,
         )
 
     logger.info("Process completed successfully!")

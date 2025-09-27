@@ -267,7 +267,8 @@ def upload_file():
                     'original_filename': filename,
                     'upload_time': datetime.now().isoformat(),
                     'validation': validation,
-                    'filepath': str(filepath)
+                    'filepath': str(filepath),
+                    'top_n': 20,
                 }
                 
                 flash('File uploaded successfully!', 'success')
@@ -336,7 +337,8 @@ def fetch_database_data():
             'data': data,
             'source': 'database',
             'fetch_time': datetime.now().isoformat(),
-            'filters': filters
+            'filters': filters,
+            'top_n': filters.get('top_n', 20) if isinstance(filters, dict) else 20
         }
         
         return jsonify({
@@ -367,10 +369,11 @@ def analyze(session_id):
         'preview': data.head(10).to_dict('records')
     }
     
-    return render_template('analyze.html', 
-                         session_id=session_id, 
+    return render_template('analyze.html',
+                         session_id=session_id,
                          stats=stats,
-                         data_source=session_data.get('source', 'file'))
+                         data_source=session_data.get('source', 'file'),
+                         top_n=session_data.get('top_n', 20))
 
 
 @app.route('/api/analyze/<session_id>', methods=['POST'])
@@ -385,7 +388,19 @@ def run_analysis(session_id):
         
         # Get analysis parameters
         params = request.json or {}
-        
+
+        # Determine top_n preference
+        requested_top_n = params.get('top_n', session_data.get('top_n', 20))
+        try:
+            top_n = int(requested_top_n)
+        except (TypeError, ValueError):
+            logger.warning(f"Invalid top_n value '{requested_top_n}' received; defaulting to 20")
+            top_n = 20
+        if top_n <= 0:
+            logger.warning(f"Non-positive top_n value '{top_n}' received; defaulting to 20")
+            top_n = 20
+        analysis_results[session_id]['top_n'] = top_n
+
         # Initialize analyzer
         analyzer = GenePairAnalyzer(
             n_features=params.get('n_features', 5),
@@ -408,6 +423,7 @@ def run_analysis(session_id):
         # Store results
         analysis_results[session_id]['analysis_results'] = results
         analysis_results[session_id]['analysis_time'] = datetime.now().isoformat()
+        analysis_results[session_id]['top_n'] = top_n
         
         logger.info(f"Analysis completed for session {session_id}")
         
@@ -733,9 +749,10 @@ def get_dashboard_data(session_id):
             'session_id': session_id,
             'status': 'analyzed',
             'summary_stats': results.get('summary_stats', {}),
-            'recommendations': results.get('recommendations', [])[:20],  # Top 20
+            'recommendations': results.get('recommendations', [])[:session_data.get('top_n', 20)],
             'total_recommendations': len(results.get('recommendations', [])),
-            'data_source': session_data.get('source', 'file')
+            'data_source': session_data.get('source', 'file'),
+            'top_n': session_data.get('top_n', 20)
         }
         
         return jsonify(dashboard_data)

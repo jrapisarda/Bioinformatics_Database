@@ -24,26 +24,32 @@ class ResultsDashboard:
         self.chart_generator = ChartGenerator()
         self.interactive_plotter = InteractivePlotter()
         
-    def create_comprehensive_dashboard(self, 
+    def create_comprehensive_dashboard(self,
                                      analysis_results: Dict[str, Any],
                                      original_data: pd.DataFrame,
-                                     session_id: str) -> Dict[str, Any]:
+                                     session_id: str,
+                                     top_n: int = 20) -> Dict[str, Any]:
         """Create a comprehensive dashboard with all components."""
-        
+
+        if top_n <= 0:
+            logger.warning("Received non-positive top_n value; defaulting to 20")
+            top_n = 20
+
         dashboard = {
             'metadata': {
                 'session_id': session_id,
                 'created_at': pd.Timestamp.now().isoformat(),
                 'total_pairs': len(original_data),
-                'n_recommendations': len(analysis_results.get('recommendations', []))
+                'n_recommendations': len(analysis_results.get('recommendations', [])),
+                'top_n': top_n
             },
             'summary_stats': self._create_summary_statistics(analysis_results),
-            'top_recommendations': self._get_top_recommendations(analysis_results, n=20),
+            'top_recommendations': self._get_top_recommendations(analysis_results, n=top_n),
             'visualizations': self._create_all_visualizations(original_data, analysis_results),
-            'interactive_components': self._create_interactive_components(analysis_results, session_id),
+            'interactive_components': self._create_interactive_components(analysis_results, session_id, top_n),
             'export_data': self._prepare_export_data(analysis_results, original_data)
         }
-        
+
         return dashboard
     
     def _create_summary_statistics(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
@@ -125,12 +131,16 @@ class ResultsDashboard:
         
         return visualizations
     
-    def _create_interactive_components(self, analysis_results: Dict[str, Any], session_id: str) -> Dict[str, Any]:
+    def _create_interactive_components(self,
+                                       analysis_results: Dict[str, Any],
+                                       session_id: str,
+                                       top_n: int) -> Dict[str, Any]:
         """Create interactive HTML components."""
         components = {}
-        
+
         # Top recommendations cards
-        top_recs = self._get_top_recommendations(analysis_results, n=10)
+        card_limit = min(max(top_n, 1), 10)
+        top_recs = self._get_top_recommendations(analysis_results, n=card_limit)
         cards_html = []
         for rec in top_recs:
             cards_html.append(self.interactive_plotter.create_recommendation_card(rec))
