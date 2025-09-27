@@ -45,8 +45,11 @@ class ChartGenerator:
         plot_data = []
         
         if 'dz_ss_mean' in data.columns:
-            ss_series = pd.to_numeric(data['dz_ss_mean'], errors='coerce')
-            ss_series = ss_series[np.isfinite(ss_series)]
+            ss_series = (
+                pd.to_numeric(data['dz_ss_mean'], errors='coerce')
+                .replace([np.inf, -np.inf], np.nan)
+                .dropna()
+            )
             if not ss_series.empty:
                 plot_data.append({
                     'y': ss_series,
@@ -56,8 +59,11 @@ class ChartGenerator:
                 })
 
         if 'dz_soth_mean' in data.columns:
-            soth_series = pd.to_numeric(data['dz_soth_mean'], errors='coerce')
-            soth_series = soth_series[np.isfinite(soth_series)]
+            soth_series = (
+                pd.to_numeric(data['dz_soth_mean'], errors='coerce')
+                .replace([np.inf, -np.inf], np.nan)
+                .dropna()
+            )
             if not soth_series.empty:
                 plot_data.append({
                     'y': soth_series,
@@ -105,16 +111,34 @@ class ChartGenerator:
             return self._empty_chart("Scatter plot requires effect size columns")
         
         # Prepare data
-        x_series = pd.to_numeric(data['dz_ss_mean'], errors='coerce')
-        y_series = pd.to_numeric(data['dz_soth_mean'], errors='coerce')
+        x_series = (
+            pd.to_numeric(data['dz_ss_mean'], errors='coerce')
+            .replace([np.inf, -np.inf], np.nan)
+        )
+        y_series = (
+            pd.to_numeric(data['dz_soth_mean'], errors='coerce')
+            .replace([np.inf, -np.inf], np.nan)
+        )
         finite_mask = np.isfinite(x_series) & np.isfinite(y_series)
 
         if not finite_mask.any():
-            return self._empty_chart("Scatter plot requires finite effect size values")
+            return self._empty_chart("No paired effect sizes")
 
         filtered_data = data.loc[finite_mask]
         x_data = x_series[finite_mask]
         y_data = y_series[finite_mask]
+        if 'hover_text' in filtered_data.columns:
+            hover_text = (
+                filtered_data['hover_text']
+                .fillna('')
+                .astype(str)
+                .tolist()
+            )
+        else:
+            hover_text = [
+                f"Gene A: {row.get('GeneAName', 'Unknown')}<br>Gene B: {row.get('GeneBName', 'Unknown')}"
+                for _, row in filtered_data.iterrows()
+            ]
         
         # Color by significance
         colors = []
@@ -144,8 +168,7 @@ class ChartGenerator:
                 opacity=0.7,
                 line=dict(width=1, color='white')
             ),
-            text=[f"Gene A: {row['GeneAName']}<br>Gene B: {row['GeneBName']}"
-                  for _, row in filtered_data.iterrows()],
+            text=hover_text,
             hovertemplate='<b>%{text}</b><br>' +
                          'Septic Shock: %{x:.3f}<br>' +
                          'Other Sepsis: %{y:.3f}<br>' +
