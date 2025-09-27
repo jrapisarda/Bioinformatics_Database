@@ -238,6 +238,8 @@ class ResultsDashboard:
                             <div class="row">
                                 <div class="col-md-6">
                                     <dl class="row">
+                                        <dt class="col-sm-4">Rank</dt>
+                                        <dd class="col-sm-8" id="modal-rank">-</dd>
                                         <dt class="col-sm-4">Gene A</dt>
                                         <dd class="col-sm-8" id="modal-gene-a">-</dd>
                                         <dt class="col-sm-4">Gene B</dt>
@@ -252,6 +254,7 @@ class ResultsDashboard:
                                 </div>
                                 <div class="col-md-6">
                                     <h6>Additional Details</h6>
+                                    <div class="mb-2" id="modal-badges"></div>
                                     <pre class="bg-light p-3 border rounded" id="modal-full-json" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap;"></pre>
                                 </div>
                             </div>
@@ -267,112 +270,143 @@ class ResultsDashboard:
             <script>
                 const dashboardData = {dashboard_json};
 
-                // Embed Plotly charts
-                const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {}))};
-                const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {}))};
+                document.addEventListener('DOMContentLoaded', () => {{
+                    // Embed Plotly charts
+                    const boxplotData = {json.dumps(dashboard['visualizations'].get('boxplot', {}))};
+                    const scatterData = {json.dumps(dashboard['visualizations'].get('scatter', {}))};
 
-                if (boxplotData.data) {{
-                    Plotly.newPlot('boxplot-chart', boxplotData.data, boxplotData.layout);
-                }}
+                    if (boxplotData.data) {{
+                        Plotly.newPlot('boxplot-chart', boxplotData.data, boxplotData.layout);
+                    }}
 
-                if (scatterData.data) {{
-                    Plotly.newPlot('scatter-chart', scatterData.data, scatterData.layout);
-                }}
+                    if (scatterData.data) {{
+                        Plotly.newPlot('scatter-chart', scatterData.data, scatterData.layout);
+                    }}
 
-                function getRecommendations() {{
-                    const exportData = dashboardData && dashboardData.export_data ? dashboardData.export_data : {{}};
-                    const recs = Array.isArray(exportData.recommendations) ? exportData.recommendations : [];
-                    return recs;
-                }}
-
-                window.showGenePairDetails = function(geneA, geneB) {{
-                    const recommendations = getRecommendations();
                     const modalElement = document.getElementById('gene-detail-modal');
-                    const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
                     const errorAlert = document.getElementById('gene-detail-error');
                     const exportBtn = document.getElementById('export-pair-btn');
 
-                    const match = recommendations.find(rec => (
-                        (rec.gene_a === geneA && rec.gene_b === geneB) ||
-                        (rec.gene_a === geneB && rec.gene_b === geneA)
-                    ));
-
-                    if (match) {{
-                        errorAlert.classList.add('d-none');
-                        document.getElementById('modal-gene-a').textContent = match.gene_a || '-';
-                        document.getElementById('modal-gene-b').textContent = match.gene_b || '-';
-                        document.getElementById('modal-combined-score').textContent = typeof match.combined_score !== 'undefined' ? match.combined_score : '-';
-                        document.getElementById('modal-rules-score').textContent = typeof match.rules_score !== 'undefined' ? match.rules_score : '-';
-                        document.getElementById('modal-ml-confidence').textContent = typeof match.ml_confidence !== 'undefined' ? match.ml_confidence : '-';
-                        document.getElementById('modal-full-json').textContent = JSON.stringify(match, null, 2);
-
-                        if (exportBtn) {{
-                            exportBtn.disabled = false;
-                            exportBtn.classList.remove('disabled');
-                            exportBtn.onclick = function() {{
-                                exportPairData(match.gene_a, match.gene_b);
-                            }};
-                        }}
-                    }} else {{
-                        document.getElementById('modal-gene-a').textContent = geneA || '-';
-                        document.getElementById('modal-gene-b').textContent = geneB || '-';
-                        document.getElementById('modal-combined-score').textContent = '-';
-                        document.getElementById('modal-rules-score').textContent = '-';
-                        document.getElementById('modal-ml-confidence').textContent = '-';
-                        document.getElementById('modal-full-json').textContent = 'Recommendation details could not be found in the exported data set.';
-                        errorAlert.classList.remove('d-none');
-
-                        if (exportBtn) {{
-                            exportBtn.disabled = true;
-                            exportBtn.classList.add('disabled');
-                            exportBtn.onclick = null;
-                        }}
-                    }}
-
-                    modalInstance.show();
-                }};
-
-                window.exportPairData = function(geneA, geneB) {{
-                    const recommendations = getRecommendations();
-                    const record = recommendations.find(rec => (
-                        (rec.gene_a === geneA && rec.gene_b === geneB) ||
-                        (rec.gene_a === geneB && rec.gene_b === geneA)
-                    ));
-
-                    const exportBtn = document.getElementById('export-pair-btn');
-
-                    if (!record) {{
-                        if (exportBtn) {{
-                            exportBtn.disabled = true;
-                            exportBtn.classList.add('disabled');
-                        }}
-                        console.warn('No data available to export for the selected gene pair.');
+                    if (!modalElement || !errorAlert || !exportBtn) {{
+                        console.error('Gene pair modal elements are missing from the document.');
+                        window.showGenePairDetails = function showGenePairDetails() {{
+                            console.error('Modal cannot be displayed because required elements are missing.');
+                        }};
+                        window.exportPairData = function exportPairData() {{
+                            console.error('Export cannot proceed because required elements are missing.');
+                        }};
                         return;
                     }}
 
-                    if (typeof Blob === 'undefined' || typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {{
-                        if (exportBtn) {{
-                            exportBtn.disabled = true;
-                            exportBtn.classList.add('disabled');
-                            exportBtn.title = 'Export not supported in this environment.';
-                        }}
-                        console.warn('Blob downloads are not supported in this environment.');
-                        return;
+                    function getRecommendations() {{
+                        const exportData = dashboardData && dashboardData.export_data ? dashboardData.export_data : {{}};
+                        const recs = Array.isArray(exportData.recommendations) ? exportData.recommendations : [];
+                        return recs;
                     }}
 
-                    const jsonString = JSON.stringify(record, null, 2);
-                    const blob = new Blob([jsonString], {{ type: 'application/json' }});
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    const safeGeneA = geneA ? geneA.replace(/[^a-z0-9_-]+/gi, '_') : 'geneA';
-                    const safeGeneB = geneB ? geneB.replace(/[^a-z0-9_-]+/gi, '_') : 'geneB';
-                    link.download = `${{safeGeneA}}_${{safeGeneB}}_recommendation.json`;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                }};
+                    const NO_FLAGS_HTML = '<span class="text-muted">No special flags</span>';
+
+                    function renderBadges(recommendation) {{
+                        const badges = [];
+                        if (recommendation.is_high_confidence) {{
+                            badges.push('<span class="badge bg-success me-1">High Confidence</span>');
+                        }}
+                        if (recommendation.is_outlier) {{
+                            badges.push('<span class="badge bg-warning text-dark">Outlier</span>');
+                        }}
+                        return badges.join(' ');
+                    }}
+
+                    window.showGenePairDetails = function showGenePairDetails(geneA, geneB) {{
+                        const recommendations = getRecommendations();
+                        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+                        const match = recommendations.find(rec => (
+                            (rec.gene_a === geneA && rec.gene_b === geneB) ||
+                            (rec.gene_a === geneB && rec.gene_b === geneA)
+                        ));
+
+                        if (match) {{
+                            errorAlert.classList.add('d-none');
+                            document.getElementById('modal-rank').textContent = typeof match.rank !== 'undefined' ? `#${{match.rank}}` : '-';
+                            document.getElementById('modal-gene-a').textContent = match.gene_a || '-';
+                            document.getElementById('modal-gene-b').textContent = match.gene_b || '-';
+                            document.getElementById('modal-combined-score').textContent = typeof match.combined_score !== 'undefined' ? match.combined_score : '-';
+                            document.getElementById('modal-rules-score').textContent = typeof match.rules_score !== 'undefined' ? match.rules_score : '-';
+                            document.getElementById('modal-ml-confidence').textContent = typeof match.ml_confidence !== 'undefined' ? match.ml_confidence : '-';
+                            document.getElementById('modal-badges').innerHTML = renderBadges(match) || NO_FLAGS_HTML;
+                            document.getElementById('modal-full-json').textContent = JSON.stringify(match, null, 2);
+
+                            if (exportBtn) {{
+                                exportBtn.disabled = false;
+                                exportBtn.classList.remove('disabled');
+                                exportBtn.title = '';
+                                exportBtn.onclick = function handleExportClick() {{
+                                    exportPairData(match.gene_a, match.gene_b);
+                                }};
+                            }}
+                        }} else {{
+                            document.getElementById('modal-rank').textContent = '-';
+                            document.getElementById('modal-gene-a').textContent = geneA || '-';
+                            document.getElementById('modal-gene-b').textContent = geneB || '-';
+                            document.getElementById('modal-combined-score').textContent = '-';
+                            document.getElementById('modal-rules-score').textContent = '-';
+                            document.getElementById('modal-ml-confidence').textContent = '-';
+                            document.getElementById('modal-badges').innerHTML = NO_FLAGS_HTML;
+                            document.getElementById('modal-full-json').textContent = 'Recommendation details could not be found in the exported data set.';
+                            errorAlert.classList.remove('d-none');
+
+                            if (exportBtn) {{
+                                exportBtn.disabled = true;
+                                exportBtn.classList.add('disabled');
+                                exportBtn.title = '';
+                                exportBtn.onclick = null;
+                            }}
+                        }}
+
+                        modalInstance.show();
+                    }};
+
+                    window.exportPairData = function exportPairData(geneA, geneB) {{
+                        const recommendations = getRecommendations();
+                        const record = recommendations.find(rec => (
+                            (rec.gene_a === geneA && rec.gene_b === geneB) ||
+                            (rec.gene_a === geneB && rec.gene_b === geneA)
+                        ));
+
+                        if (!record) {{
+                            if (exportBtn) {{
+                                exportBtn.disabled = true;
+                                exportBtn.classList.add('disabled');
+                            }}
+                            console.warn('No data available to export for the selected gene pair.');
+                            return;
+                        }}
+
+                        if (typeof Blob === 'undefined' || typeof URL === 'undefined' || typeof URL.createObjectURL === 'undefined') {{
+                            if (exportBtn) {{
+                                exportBtn.disabled = true;
+                                exportBtn.classList.add('disabled');
+                                exportBtn.title = 'Export not supported in this environment.';
+                            }}
+                            console.warn('Blob downloads are not supported in this environment.');
+                            return;
+                        }}
+
+                        const jsonString = JSON.stringify(record, null, 2);
+                        const blob = new Blob([jsonString], {{ type: 'application/json' }});
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        const safeGeneA = geneA ? geneA.replace(/[^a-z0-9_-]+/gi, '_') : 'geneA';
+                        const safeGeneB = geneB ? geneB.replace(/[^a-z0-9_-]+/gi, '_') : 'geneB';
+                        link.download = `${{safeGeneA}}_${{safeGeneB}}_recommendation.json`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(url);
+                    }};
+                }});
             </script>
         </body>
         </html>
