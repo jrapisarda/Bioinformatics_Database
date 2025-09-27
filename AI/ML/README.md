@@ -144,19 +144,45 @@ python main.py --database --config db_config.json --output results.json
 ## 📊 Data Format
 
 ### Required Columns
-- `pair_id`: Unique identifier for gene pair
-- `GeneAName`, `GeneBName`: Gene symbols
-- `dz_ss_mean`, `dz_soth_mean`: Effect sizes (Cohen's d)
-- `p_ss`, `p_soth`: P-values
-- `q_ss`, `q_soth`: FDR-adjusted p-values
-- `abs_dz_ss`, `abs_dz_soth`: Absolute effect sizes
+The upload must include the full schema below. Column names are case-insensitive, and common legacy headers (for example, `Gene_A` or `PairID`) are automatically normalised to the canonical names during ingestion.
+
+- `pair_id`
+- `n_studies_ss`
+- `n_studies_soth`
+- `dz_ss_mean`
+- `dz_ss_se`
+- `dz_ss_ci_low`
+- `dz_ss_ci_high`
+- `dz_ss_Q`
+- `dz_ss_I2`
+- `dz_ss_z`
+- `p_ss`
+- `dz_soth_mean`
+- `dz_soth_se`
+- `dz_soth_ci_low`
+- `dz_soth_ci_high`
+- `dz_soth_Q`
+- `dz_soth_I2`
+- `dz_soth_z`
+- `p_soth`
+- `kappa_ss`
+- `kappa_soth`
+- `abs_dz_ss`
+- `abs_dz_soth`
+- `q_ss`
+- `q_soth`
+- `rank_score`
+- `GeneAName`
+- `GeneBName`
+- `GeneAKey`
+- `GeneBKey`
 
 ### Optional Columns
-- `study_key`: Study identifier
-- `illness_label`: Condition type (control, sepsis, septic shock)
-- `n_studies_ss`, `n_studies_soth`: Number of studies
-- `dz_ss_I2`, `dz_soth_I2`: Heterogeneity measures
-- `dz_ss_z`, `dz_soth_z`: Z-scores
+Additional metadata can be supplied using:
+
+- `study_key`
+- `illness_label`
+- `rho_spearman`
 
 ## 🔧 Configuration
 

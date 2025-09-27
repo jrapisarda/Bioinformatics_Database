@@ -5,6 +5,7 @@ Handles file-based meta-analysis data processing and validation.
 """
 
 import logging
+import re
 import pandas as pd
 import numpy as np
 from typing import Dict, List, Optional, Tuple, Any
@@ -16,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class MetaAnalysisProcessor:
     """Processor for meta-analysis data files."""
-    
+
     REQUIRED_COLUMNS = [
         'pair_id', 'n_studies_ss', 'n_studies_soth',
         'dz_ss_mean', 'dz_ss_se', 'dz_ss_ci_low', 'dz_ss_ci_high',
@@ -27,6 +28,49 @@ class MetaAnalysisProcessor:
         'q_ss', 'q_soth', 'rank_score',
         'GeneAName', 'GeneBName', 'GeneAKey', 'GeneBKey'
     ]
+
+    COLUMN_ALIASES = {
+        'gene_a': 'GeneAName',
+        'genea': 'GeneAName',
+        'gene_a_name': 'GeneAName',
+        'gene_a_symbol': 'GeneAName',
+        'gene_a_gene': 'GeneAName',
+        'gene_b': 'GeneBName',
+        'geneb': 'GeneBName',
+        'gene_b_name': 'GeneBName',
+        'gene_b_symbol': 'GeneBName',
+        'gene_b_gene': 'GeneBName',
+        'gene_a_key': 'GeneAKey',
+        'genea_key': 'GeneAKey',
+        'gene_a_id': 'GeneAKey',
+        'gene_a_identifier': 'GeneAKey',
+        'gene_b_key': 'GeneBKey',
+        'geneb_key': 'GeneBKey',
+        'gene_b_id': 'GeneBKey',
+        'gene_b_identifier': 'GeneBKey',
+        'pairid': 'pair_id',
+        'pair_identifier': 'pair_id',
+        'pair name': 'pair_id',
+        'n_studies_septic_shock': 'n_studies_ss',
+        'nstudies_ss': 'n_studies_ss',
+        'studies_ss': 'n_studies_ss',
+        'n_studies_other': 'n_studies_soth',
+        'n_studies_sceptic_other': 'n_studies_soth',
+        'n_studies_control': 'n_studies_soth',
+        'studies_soth': 'n_studies_soth',
+        'dz_ss_mean_effect': 'dz_ss_mean',
+        'dz_soth_mean_effect': 'dz_soth_mean',
+        'pvalue_ss': 'p_ss',
+        'p_value_ss': 'p_ss',
+        'pvalue_soth': 'p_soth',
+        'p_value_soth': 'p_soth',
+        'qvalue_ss': 'q_ss',
+        'q_value_ss': 'q_ss',
+        'qvalue_soth': 'q_soth',
+        'q_value_soth': 'q_soth',
+        'rankscore': 'rank_score',
+        'rank score': 'rank_score'
+    }
     
     OPTIONAL_COLUMNS = [
         'study_key', 'illness_label', 'rho_spearman'
@@ -65,7 +109,9 @@ class MetaAnalysisProcessor:
             data = pd.read_json(file_path, orient='records')
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
-        
+
+        data = self._normalize_column_names(data)
+
         logger.info(f"Loaded {len(data)} records from {file_path}")
         
         # Store data and metadata
@@ -76,7 +122,42 @@ class MetaAnalysisProcessor:
             'load_timestamp': pd.Timestamp.now().isoformat(),
             'original_shape': data.shape
         }
-        
+
+        return data
+
+    @classmethod
+    def _normalize_key(cls, column_name: str) -> str:
+        """Normalize column names for comparison."""
+        normalized = re.sub(r'[^a-z0-9]+', '_', column_name.strip().lower())
+        return normalized.strip('_')
+
+    def _normalize_column_names(self, data: pd.DataFrame) -> pd.DataFrame:
+        """Rename columns using known aliases before validation."""
+        alias_map = {
+            self._normalize_key(col): col for col in self.REQUIRED_COLUMNS
+        }
+
+        for alias, target in self.COLUMN_ALIASES.items():
+            alias_map[self._normalize_key(alias)] = target
+
+        rename_map = {}
+        for column in data.columns:
+            normalized = self._normalize_key(column)
+            if normalized in alias_map:
+                target = alias_map[normalized]
+                if target not in data.columns:
+                    rename_map[column] = target
+                elif column != target:
+                    logger.debug(
+                        "Skipping renaming of column '%s' to '%s' because target already exists",
+                        column,
+                        target
+                    )
+
+        if rename_map:
+            logger.info("Normalizing column names using aliases: %s", rename_map)
+            data = data.rename(columns=rename_map)
+
         return data
     
     def validate_data(self, data: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
