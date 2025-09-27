@@ -239,7 +239,86 @@ class ChartGenerator:
         except Exception as e:
             logger.error(f"Error creating scatter plot: {e}")
             return self._create_error_chart("Error creating scatter plot")
-    
+
+    def create_rho_spearman_boxplot(
+        self,
+        data: pd.DataFrame,
+        results: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """Create a violin/box plot for rho_spearman distribution."""
+
+        try:
+            if 'rho_spearman' not in data.columns:
+                return self._create_error_chart("rho_spearman values unavailable")
+
+            rho_values = pd.to_numeric(data['rho_spearman'], errors='coerce')
+            rho_values = rho_values[np.isfinite(rho_values)]
+
+            if rho_values.empty:
+                return self._create_error_chart("No rho_spearman values available")
+
+            gene_pair_label: Optional[str] = None
+            if results:
+                recs = results.get('recommendations') or []
+                if recs:
+                    gene_a = recs[0].get('gene_a')
+                    gene_b = recs[0].get('gene_b')
+                    if gene_a and gene_b:
+                        gene_pair_label = f"{gene_a}-{gene_b}"
+
+            title_suffix = f" for {gene_pair_label}" if gene_pair_label else ""
+
+            fig = go.Figure()
+            fig.add_trace(
+                go.Violin(
+                    y=rho_values,
+                    name='Distribution',
+                    box_visible=True,
+                    meanline_visible=True,
+                    fillcolor=self.default_colors['success'],
+                    opacity=0.5
+                )
+            )
+
+            fig.add_trace(
+                go.Box(
+                    y=rho_values,
+                    name='Summary',
+                    marker_color=self.default_colors['primary'],
+                    boxpoints='outliers'
+                )
+            )
+
+            fig.update_layout(
+                title={
+                    'text': f"Spearman Correlation Distribution{title_suffix}",
+                    'x': 0.5,
+                    'font': {'size': 18, 'family': 'Georgia, serif'}
+                },
+                xaxis_title='',
+                yaxis_title='rho (Spearman)',
+                height=self.chart_height,
+                plot_bgcolor='white',
+                paper_bgcolor=self.default_colors['background'],
+                font={'family': 'Arial, sans-serif'},
+                showlegend=False
+            )
+
+            fig.add_annotation(
+                text="Violin indicates density; box highlights quartiles and median.",
+                xref='paper', yref='paper',
+                x=0.02, y=0.98,
+                xanchor='left', yanchor='top',
+                showarrow=False,
+                font=dict(size=11, color='gray')
+            )
+
+            return fig.to_json()
+
+        except Exception as exc:
+            logger.error(f"Error creating rho_spearman chart: {exc}")
+            return self._create_error_chart("Error creating rho_spearman chart")
+
     def create_clustering_viz(self, results: Dict[str, Any]) -> str:
         """
         Create clustering visualization.
