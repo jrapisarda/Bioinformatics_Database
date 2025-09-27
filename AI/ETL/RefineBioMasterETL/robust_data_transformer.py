@@ -50,11 +50,30 @@ class DataTransformer:
         self.logger.info(f"Starting data transformation for study: {study_code}")
         
         try:
+            json_metadata = extracted_data.get('json_metadata', {})
+
+            experiment_data = json_metadata.get('experiment')
+            if not isinstance(experiment_data, dict):
+                experiments_map = json_metadata.get('experiments', {})
+                experiment_data = experiments_map.get(study_code, {}) if isinstance(experiments_map, dict) else {}
+
+            def _is_sample_mapping(candidate: Any) -> bool:
+                return isinstance(candidate, dict) and candidate and all(isinstance(v, dict) for v in candidate.values())
+
+            raw_samples = json_metadata.get('samples')
+            if _is_sample_mapping(raw_samples):
+                samples_data = raw_samples
+            elif isinstance(raw_samples, dict) and study_code in raw_samples and _is_sample_mapping(raw_samples[study_code]):
+                samples_data = raw_samples[study_code]
+            else:
+                experiment_samples = experiment_data.get('samples') if isinstance(experiment_data, dict) else {}
+                samples_data = experiment_samples if _is_sample_mapping(experiment_samples) else {}
+
             # Transform dimension data
-            dim_study = self._transform_dim_study(extracted_data['json_metadata']['experiment'])
-            dim_platform = self._transform_dim_platform(extracted_data['json_metadata']['samples'])
+            dim_study = self._transform_dim_study(experiment_data)
+            dim_platform = self._transform_dim_platform(samples_data)
             dim_illness = self._transform_dim_illness(extracted_data['tsv_metadata'])
-            dim_samples = self._transform_dim_samples(extracted_data['tsv_metadata'], extracted_data['json_metadata']['samples'])
+            dim_samples = self._transform_dim_samples(extracted_data['tsv_metadata'], samples_data)
             dim_genes = self._transform_dim_genes(extracted_data['expression_data'])
             
             # Transform fact data (gene expression)
@@ -332,7 +351,9 @@ class DataTransformer:
             
             # Reset index to make gene_symbol a column
             expression_long = expression_data.reset_index()
-            expression_long = expression_long.rename(columns={expression_long.columns[0]: 'gene_symbol'}
+            expression_long = expression_long.rename(
+                columns={expression_long.columns[0]: 'gene_symbol'}
+            )
             
             # Melt the dataframe to long format
             expression_long = pd.melt(
